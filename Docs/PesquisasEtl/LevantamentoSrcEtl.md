@@ -1,5 +1,6 @@
 ## 📋 Levantamento — Scripts ETL e Fontes de Dados da Base SRC
 
+---
 
 ## 1. 🌐 Fontes de Dados de Origem
 
@@ -85,6 +86,38 @@ dashboard/ → gera:
   └── docs/api/acoes.json    (API pública sem PII)
 ```
 
+### 3.1 Detalhamento dos Pipelines
+
+```text
+PIPELINE 1 — Extração pública
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Fonte 1 → scraper.py     → lista de acao_ids
+Fonte 2 → detail.py      → campos de cada ação
+                         → salva: data/serra/{id}.json
+
+PIPELINE 2 — Extração autenticada
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Fonte 3+4 → gerenciar.py → participações por atividade
+                         → salva: data/participacoes/{proc}.json
+
+PIPELINE 3 — Enriquecimento (opcional)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Fonte 5 → enriquecer.py  → preenche áreas temáticas vazias
+
+PIPELINE 4 — Consolidação
+━━━━━━━━━━━━━━━━━━━━━━━━━
+consolidar.py → junta pipeline 1 + 2 + 3
+vinculadas.py → resolve programa → ações filhas
+             → salva: data/serra_consolidado.json
+
+PIPELINE 5 — Publicação
+━━━━━━━━━━━━━━━━━━━━━━━
+dashboard/    → lê o consolidado e gera:
+              ├── docs/index.html       (painel)
+              ├── docs/acoes/{id}.html  (páginas individuais)
+              └── docs/api/acoes.json   (API pública sem PII)
+```
+
 ---
 
 ## 4. 🗃️ Modelo de Dados (schema das entidades)
@@ -139,3 +172,4 @@ src-etl-painel --out docs/index.html
 ```
 
 ---
+
