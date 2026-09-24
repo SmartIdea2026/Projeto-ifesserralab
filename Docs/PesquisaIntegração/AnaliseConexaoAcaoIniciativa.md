@@ -133,9 +133,3 @@ O artefato com os pares confirmados foi consolidado no arquivo JSON:
 ```
 
 ---
-
-## 6. Conclusão
-
-A validação conclui que **a conexão por título é viável, altamente confiável e recomendada**, cobrindo praticamente metade (49,54%) de todas as ações de extensão registradas no Campus Serra. 
-
-As inconsistências e duplicações observadas no Horizon foram isoladas e tratadas, garantindo um conjunto limpo de 72 vínculos diretos suportados por regras de negócio claras e prontos para homologação e carga em banco de dados.
