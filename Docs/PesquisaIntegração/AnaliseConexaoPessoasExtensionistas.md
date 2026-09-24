@@ -19,8 +19,6 @@ O objetivo desta análise foi investigar a viabilidade técnica de estabelecer u
 1. Onde os nomes de pessoas físicas estão armazenados em cada sistema;
 2. O grau de correspondência e sobreposição real entre as bases;
 3. A identificação de pessoas que aparecem apenas pontualmente em atividades de extensão (sem perfil formal de extensionista);
-<!--4. A integridade referencial, presença de duplicidades e riscos de homônimos;
-5. O potencial de enriquecimento mútuo de dados proporcionado pela unificação.-->
 
 ---
 
