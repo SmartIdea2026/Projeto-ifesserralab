@@ -1,0 +1,79 @@
+{
+  "gerado_em": "2026-09-24T16:22:35",
+  "insumos": {
+    "extensao_catalogados": " bases/SRC/api/extensionistas/index.json (757 registros)",
+    "extensao_atividades": " bases/SRC/api/atividades/*.json (525 arquivos)",
+    "extensao_acoes": " bases/SRC/api/acoes/*.json (202 arquivos)",
+    "horizon_parquet": " bases/horizon/researchers_canonical.parquet"
+  },
+  "universos": {
+    "extensao_total": 914,
+    "catalogados": 757,
+    "pontuais": 157,
+    "horizon_lidas": 10089,
+    "horizon_validas": 10088,
+    "horizon_invalidas": 1
+  },
+  "cruzamento": {
+    "matches_confirmados": 388,
+    "matches_a_validar": 14,
+    "exclusivos_extensao": 512,
+    "exclusivos_horizon": 9686
+  },
+  "baseline_analise_consolidada": {
+    "total": 399,
+    "catalogados": 342,
+    "pontuais": 57
+  },
+  "desvios": [
+    {
+      "metrica": "total_matches",
+      "esperado": 399,
+      "obtido": 402,
+      "diferenca": 3,
+      "explicacao": "2 coordenadores de acao incluidos na fonte nova de acoes cruzam com o Horizon (alexander-jeferson-nassau-borges, livia-de-azevedo-silveira-rangel) e 1 match adicional entre pontuais; a decomposicao por classification da analise consolidada (27 alunos/22 servidores/8 externos) nao reproduz a classificacao real do parquet (34 alunos/23 servidores/2 externos/1 sem classificacao)"
+    },
+    {
+      "metrica": "matches_pontuais",
+      "esperado": 57,
+      "obtido": 60,
+      "diferenca": 3,
+      "explicacao": "2 coordenadores de acao incluidos na fonte nova de acoes cruzam com o Horizon (alexander-jeferson-nassau-borges, livia-de-azevedo-silveira-rangel) e 1 match adicional entre pontuais; a decomposicao por classification da analise consolidada (27 alunos/22 servidores/8 externos) nao reproduz a classificacao real do parquet (34 alunos/23 servidores/2 externos/1 sem classificacao)"
+    },
+    {
+      "metrica": "exclusivos_extensao",
+      "esperado": 515,
+      "obtido": 512,
+      "diferenca": -3,
+      "explicacao": "consequencia direta do total de matches acima do baseline (universos fixos)"
+    },
+    {
+      "metrica": "exclusivos_horizon",
+      "esperado": 9689,
+      "obtido": 9686,
+      "diferenca": -3,
+      "explicacao": "consequencia direta do total de matches acima do baseline (universos fixos)"
+    }
+  ],
+  "auditoria": {
+    "slug_unico_extensao": true,
+    "slug_unico_horizon": true,
+    "cardinalidade_1_1": true,
+    "particulas_excluidas": [
+      "da",
+      "das",
+      "de",
+      "do",
+      "dos",
+      "e"
+    ],
+    "registros_invalidos_horizon": [
+      {
+        "linha": 1631,
+        "nome": "-",
+        "classification": null,
+        "campus_bruto": null
+      }
+    ]
+  }
+}

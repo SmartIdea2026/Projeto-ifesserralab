@@ -1,0 +1,486 @@
+[
+  {
+    "slug": "andre-ferreira",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Andre Ferreira",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "MEMBRO DE COMITÊ GESTOR"
+      ],
+      "anos": [
+        "2024"
+      ],
+      "coordena": 0,
+      "equipe": 1,
+      "imp_coord": 0,
+      "imp_eq": 112,
+      "impacto": 112,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "André Ferreira",
+      "classification": "researcher",
+      "campus": "Vitória",
+      "cnpq_url": null,
+      "was_student": false,
+      "was_staff": true
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "athyla-caetano",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Athyla Caetano",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "pontual",
+      "funcoes": [
+        "AUTOR(A)"
+      ],
+      "anos": null,
+      "coordena": null,
+      "equipe": null,
+      "imp_coord": null,
+      "imp_eq": null,
+      "impacto": null,
+      "atividades": [
+        "3684"
+      ],
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Áthyla Caetano",
+      "classification": "student",
+      "campus": "Vila Velha",
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "brendon-mauro",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Brendon Mauro",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "ALUNO(A) BOLSISTA"
+      ],
+      "anos": [
+        "2016"
+      ],
+      "coordena": 0,
+      "equipe": 1,
+      "imp_coord": 0,
+      "imp_eq": 0,
+      "impacto": 0,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Brendon Mauro",
+      "classification": "student",
+      "campus": null,
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "danilo-de-oliveira",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Danilo de Oliveira",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "ALUNO(A) BOLSISTA",
+        "ALUNO(A) VOLUNTARIO"
+      ],
+      "anos": [
+        "2016"
+      ],
+      "coordena": 0,
+      "equipe": 3,
+      "imp_coord": 0,
+      "imp_eq": 1,
+      "impacto": 1,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Danilo de Oliveira",
+      "classification": "student",
+      "campus": null,
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "david-de-assis",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "David de Assis",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "COLABORADOR(A)",
+        "MONITOR(A)"
+      ],
+      "anos": [
+        "2020",
+        "2022",
+        "2023"
+      ],
+      "coordena": 0,
+      "equipe": 3,
+      "imp_coord": 0,
+      "imp_eq": 59,
+      "impacto": 59,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "David de Assis",
+      "classification": "student",
+      "campus": "Serra",
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "diego-pasti",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Diego Pasti",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "ALUNO(A) VOLUNTARIO"
+      ],
+      "anos": [
+        "2016"
+      ],
+      "coordena": 0,
+      "equipe": 1,
+      "imp_coord": 0,
+      "imp_eq": 0,
+      "impacto": 0,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Diego Pasti",
+      "classification": "student",
+      "campus": null,
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "fabricio-borelli",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Fabricio Borelli",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "pontual",
+      "funcoes": [
+        "INSTRUTOR(A)"
+      ],
+      "anos": null,
+      "coordena": null,
+      "equipe": null,
+      "imp_coord": null,
+      "imp_eq": null,
+      "impacto": null,
+      "atividades": [
+        "3692"
+      ],
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Fabricio Borelli",
+      "classification": "researcher",
+      "campus": "Centro-Serrano",
+      "cnpq_url": null,
+      "was_student": false,
+      "was_staff": true
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "jader-de-oliveira",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Jader de Oliveira",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "pontual",
+      "funcoes": [
+        "COLABORADOR(A)"
+      ],
+      "anos": null,
+      "coordena": null,
+      "equipe": null,
+      "imp_coord": null,
+      "imp_eq": null,
+      "impacto": null,
+      "atividades": [
+        "3289"
+      ],
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Jader de Oliveira",
+      "classification": "researcher",
+      "campus": "Cariacica",
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": true
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "kamila-scalzer",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Kamila Scalzer",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "APOIO TÉCNICO"
+      ],
+      "anos": [
+        "2020"
+      ],
+      "coordena": 0,
+      "equipe": 1,
+      "imp_coord": 0,
+      "imp_eq": 54,
+      "impacto": 54,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Kamila Scalzer",
+      "classification": "researcher",
+      "campus": "Colatina",
+      "cnpq_url": null,
+      "was_student": false,
+      "was_staff": true
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "lorhan-de-souza",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Lorhan de Souza",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "ALUNO(A) EM ATIVIDADE CURRICULAR"
+      ],
+      "anos": [
+        "2021"
+      ],
+      "coordena": 0,
+      "equipe": 1,
+      "imp_coord": 0,
+      "imp_eq": 0,
+      "impacto": 0,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Lorhan de Souza",
+      "classification": "student",
+      "campus": null,
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "ludmila-dias",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Ludmila Dias",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "ALUNO(A) VOLUNTARIO",
+        "APOIO TÉCNICO"
+      ],
+      "anos": [
+        "2022",
+        "2024"
+      ],
+      "coordena": 0,
+      "equipe": 2,
+      "imp_coord": 0,
+      "imp_eq": 53,
+      "impacto": 53,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Ludmila Dias",
+      "classification": "student",
+      "campus": "Serra",
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "luiza-de-alencar",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Luiza de Alencar",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "ALUNO(A) EM ATIVIDADE CURRICULAR"
+      ],
+      "anos": [
+        "2021"
+      ],
+      "coordena": 0,
+      "equipe": 1,
+      "imp_coord": 0,
+      "imp_eq": 7,
+      "impacto": 7,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Luiza De Alencar",
+      "classification": "student",
+      "campus": null,
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "mafe-mattos",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Mafe Mattos",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "EXTENSIONISTA",
+        "INSTRUTOR(A)"
+      ],
+      "anos": [
+        "2020",
+        "2026"
+      ],
+      "coordena": 0,
+      "equipe": 2,
+      "imp_coord": 0,
+      "imp_eq": 22,
+      "impacto": 22,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Mafe Mattos",
+      "classification": "student",
+      "campus": null,
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  },
+  {
+    "slug": "nicolas-loose",
+    "termo_count": 2,
+    "extensao": {
+      "nome": "Nicolas Loose",
+      "origem": [
+        "SRC",
+        "DIRETORIA"
+      ],
+      "tipo": "catalogado",
+      "funcoes": [
+        "COLABORADOR(A)"
+      ],
+      "anos": [
+        "2020"
+      ],
+      "coordena": 0,
+      "equipe": 1,
+      "imp_coord": 0,
+      "imp_eq": 0,
+      "impacto": 0,
+      "atividades": null,
+      "acoes": null
+    },
+    "horizon": {
+      "nome": "Nicolas Loose",
+      "classification": "student",
+      "campus": null,
+      "cnpq_url": null,
+      "was_student": true,
+      "was_staff": false
+    },
+    "motivo": "nome_curto_2_termos"
+  }
+]
