@@ -130,7 +130,29 @@ Os dados do SigPesq só podem ser obtidos com autenticação institucional. Os d
 
 ---
 
-## 3. Scripts do ETL Identificados
+## 3. O que vem nas planilhas (dicionário)
+
+| Bloco | Campos |
+| --- | --- |
+| `research_group` | Nome, Sigla, Unidade (campus), AreaConhecimento, Column1 (URL do espelho no CNPq), Site, Lideres ("Nome (e-mail)", vários por célula), ParecerDiretoria |
+| `research_projects` · identificação | **Id**, Titulo, Inicio, Fim, ParecerDiretoria, Natureza, Sigilo |
+| `research_projects` · equipe | Coordenador, EmailCoordenador, Pesquisadores, Estudantes (listas separadas por `;`), QtdOutros |
+| `research_projects` · vínculos | GrupoPesquisa, GrupoPesquisaExterno, CampusExecucao, ParceiroDemandante, ParceriaPoloInovacaoConfirmado |
+| `research_projects` · conteúdo | AreaConhecimento, LinhaPesquisa, PalavraChave, QtdPts, QtdFinanciamentos |
+| `advisorships` · plano de trabalho | **CodPT**, TituloPT, Id, Ano, Edital, Gerenciamento, Modalidade |
+| `advisorships` · projeto pai | **CodPJ**, TituloPJ |
+| `advisorships` · aluno | Orientado, OrientadoEmail, **OrientadoCpf**, CelularOrientado, Curso, Campus |
+| `advisorships` · orientador | Orientador, OrientadorEmail, CelularOrientador, CampusOrientador |
+| `advisorships` · bolsa | Programa, Valor, AgFinanciadora |
+| `advisorships` · situação | Inicio, Fim, Cancelado, CanceladoPor, AceiteOrientador, AceiteOrientadorData, AceiteOrientado, AceiteOrientadoData, Ciente, AvaliacaoRelatorio |
+| `advisorships` · área | AreaConhecimento, GradeArea, CampusExecucao |
+| `PJ_*.json` (documentos) | codigo, titulo, descricao, objetivos {geral, especificos}, cronograma [{atividade, inicio, fim}], linha_pesquisa, palavras_chave, area_conhecimento, datas {inicio, fim}, _meta {extraido_em, modelo, arquivo} |
+
+Projetos e planos de trabalho têm código (**Id** = **CodPJ**, **CodPT**), que é a chave confiável entre as planilhas. Pessoas vêm como texto (nome) + e-mail, sem ID; só o aluno tem CPF (**OrientadoCpf**). O grupo de pesquisa do projeto (`GrupoPesquisa`) também é só o nome, então o vínculo com a planilha de grupos é feito por nome.
+
+---
+
+## 4. Scripts do ETL Identificados
 
 O código fonte fica em `src/`, dividido entre `adapters` (fontes externas), `core/logic` (regras de negócio), `flows` (orquestração Prefect) e `scripts` (relatórios).
 
@@ -168,7 +190,7 @@ O código fonte fica em `src/`, dividido entre `adapters` (fontes externas), `co
 
 ---
 
-## 4. Execução Local
+## 5. Execução Local
 
 A execução completa depende de uma conta do SigPesq com permissão de relatórios. Sem essa permissão, a carga foi executada a partir das planilhas de 18/05/2026 reconstruídas do snapshot versionado em `data/exports/exports_canonical.zip`, sem login no portal:
 
@@ -192,7 +214,7 @@ Resultado (cerca de 3 minutos, sem erros):
 
 ---
 
-## 5. Pontos de Atenção Identificados
+## 6. Pontos de Atenção Identificados
 
 * Planos de trabalho com o mesmo título em anos diferentes são fundidos: 521 planos nas planilhas viraram 519 orientações no banco.
 * O valor da bolsa é guardado por programa + agência, não por plano. PIBIC/Fapes aparece com valores de 400 a 900 na planilha, mas o banco guarda um só.
