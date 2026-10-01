@@ -72,13 +72,10 @@ A Plataforma Lattes resolve exclusivamente o perfil acadêmico e o histórico de
 | Nome | cabeçalho | `nome_completo` | Sim | chave por nome/ principal de busca |
 | Financiador | projetos | `projetos_*.financiadores` | Sim | análise de fomento |
 | Orientando (IC) | orientações | `orientacoes.*.iniciacao_cientifica` | Sim | bolsistas/estudantes |
+
 ## Modelo de Dados - scriptLattes
 
 ```mermaid
----
-config:
-  layout: elk
----
 classDiagram
     direction TB
 
@@ -235,5 +232,15 @@ classDiagram
     Pesquisador "1" --> "0..*" ProducaoTecnica : produz
     Pesquisador "1" --> "0..*" PatenteRegistro : registra
     Pesquisador "1" --> "0..*" ProducaoArtistica : cria
-    Projeto "1" *
+    Projeto "1" *-- "0..*" ProjetoIntegrante : integrantes
+    Projeto "1" *-- "0..*" ProjetoFinanciador : financiadores
+    ProducaoBibliografica <|-- ArtigoPeriodico
 
+    %% ===== Relações: Atividades =====
+    Pesquisador "1" --> "0..*" Orientacao : orienta
+    Pesquisador "1" --> "0..*" Evento : participa_ou_organiza
+    Pesquisador "1" --> "0..*" Banca : integra
+
+    %% ===== Resumo =====
+    Pesquisador "1" --> "1" Estatistica : possui
+```
