@@ -72,4 +72,168 @@ A Plataforma Lattes resolve exclusivamente o perfil acadêmico e o histórico de
 | Nome | cabeçalho | `nome_completo` | Sim | chave por nome/ principal de busca |
 | Financiador | projetos | `projetos_*.financiadores` | Sim | análise de fomento |
 | Orientando (IC) | orientações | `orientacoes.*.iniciacao_cientifica` | Sim | bolsistas/estudantes |
+## Modelo de Dados - scriptLattes
+
+```mermaid
+---
+config:
+  layout: elk
+---
+classDiagram
+    direction TB
+
+    class Pesquisador {
+        String idLattes
+        String nomeCompleto
+        String nomeCitacoes
+        String sexo
+        String rotulo
+        String periodo
+        String bolsaProdutividade
+        String enderecoProfissional
+        Date atualizacaoCv
+        String url
+        String textoResumo
+    }
+
+    %% ===================== PERFIL =====================
+    namespace PERFIL {
+        class FormacaoAcademica {
+            String tipo
+            String nomeInstituicao
+            Integer anoInicio
+            Integer anoConclusao
+            String descricao
+        }
+        class AtuacaoProfissional {
+            String instituicao
+            String instituicaoNome
+            String instituicaoSigla
+            String instituicaoPais
+            String periodo
+            Integer anoInicio
+            Integer anoFim
+            String vinculo
+            String enquadramento
+            String regime
+            String cargoFuncao
+            String tipo
+            String[] disciplinas
+            String[] linhasPesquisa
+            String[] atividades
+        }
+        class AreaAtuacao {
+            String grandeArea
+            String area
+            String subarea
+            String especialidade
+            String descricaoCompleta
+        }
+        class Idioma {
+            String nome
+            String compreende
+            String fala
+            String le
+            String escreve
+            String proficienciaCompleta
+        }
+        class PremioTitulo {
+            String descricao
+            Integer ano
+        }
+        class LinhaPesquisa {
+            String linha
+        }
+    }
+
+    %% ===================== PRODUCAO =====================
+    namespace PRODUCAO {
+        class Projeto {
+            String nome
+            Integer anoInicio
+            Integer anoConclusao
+            String descricao
+            String tipo
+        }
+        class ProjetoIntegrante {
+            String nome
+            String papel
+        }
+        class ProjetoFinanciador {
+            String nome
+            String tipoApoio
+        }
+        class ProducaoBibliografica {
+            String tipo
+            String titulo
+            Integer ano
+            String autores
+        }
+        class ArtigoPeriodico {
+            String revista
+            String volume
+            String numero
+            String paginas
+            String issn
+            String doi
+            String qualis
+        }
+        class ProducaoTecnica {
+            String tipo
+        }
+        class PatenteRegistro {
+            String tipo
+        }
+        class ProducaoArtistica {
+        }
+    }
+
+    %% ===================== ATIVIDADES =====================
+    namespace ATIVIDADES {
+        class Orientacao {
+            String situacao
+            String nivel
+            String titulo
+            Integer anoInicio
+            Integer anoConclusao
+            String orientando
+            String tipoTrabalho
+            String instituicao
+            String curso
+        }
+        class Evento {
+            String tipo
+        }
+        class Banca {
+            String tipo
+        }
+    }
+
+    class Estatistica {
+        Integer totalArtigosPeriodicos
+        Integer totalLivros
+        Integer totalCapitulos
+        Integer totalTrabalhosCongressos
+        Integer totalProjetosPesquisa
+        Integer totalProjetosExtensao
+        Integer totalProjetosDesenvolvimento
+        Integer totalOrientacoesConcluidas
+        Integer totalOrientacoesAndamento
+    }
+
+    %% ===== Relações: Perfil =====
+    Pesquisador "1" --> "0..*" FormacaoAcademica : possui
+    Pesquisador "1" --> "0..*" AtuacaoProfissional : exerce
+    Pesquisador "1" --> "0..*" AreaAtuacao : atua_em
+    Pesquisador "1" --> "0..*" Idioma : fala
+    Pesquisador "1" --> "0..*" PremioTitulo : recebe
+    Pesquisador "1" --> "0..*" LinhaPesquisa : pesquisa
+
+    %% ===== Relações: Produção =====
+    Pesquisador "1" --> "0..*" Projeto : participa
+    Pesquisador "1" --> "0..*" ProducaoBibliografica : publica
+    Pesquisador "1" --> "0..*" ProducaoTecnica : produz
+    Pesquisador "1" --> "0..*" PatenteRegistro : registra
+    Pesquisador "1" --> "0..*" ProducaoArtistica : cria
+    Projeto "1" *
 
