@@ -110,3 +110,114 @@ classDiagram
 | `total_atendidos` | Extensionista | Integer | Sim | Não | Soma total de pessoas atendidas em todas as atividades das ações coordenadas ou integradas pelo extensionista. Derivado da contagem de `ParticipantePublicoAlvo` | Inteiro ≥ 0 | `247` |
 | `total_acoes` | Extensionista | Integer | Sim | Não | Quantidade de ações em que o extensionista figura como coordenador responsável. Derivado da contagem em `Acao.coordenador` | Inteiro ≥ 1 | `9` |
 
+
+
+
+
+
+## Diagrama de Classes ( COM OS DADOS PUBLICOS )
+
+```mermaid
+classDiagram
+    direction TB
+
+    class Campus {
+        +String nome
+        +String slug
+    }
+
+    class Coordenador {
+        +String nome
+    }
+
+    class Acao {
+        +String acao_id
+        +String processo
+        +String titulo
+        +String natureza
+        +String tipo
+        +String fomento
+        +String relatorio_aprovado
+        +String data_cadastro
+        +String data_ultimo_relatorio
+        +String resumo
+        +String url_detalhe
+    }
+
+    class ClassificacaoTematica {
+        +String grande_area
+        +String area_tematica_principal
+        +String area_tematica_secundaria
+        +String grande_area_inferida
+        +String area_tematica_inferida
+    }
+
+    class AcaoFilhaVinculada {
+        +String processo
+        +String titulo
+        +String natureza
+        +String tipo
+    }
+
+    Campus "1" --> "0..*" Acao : sedia
+    Coordenador "1" --> "1..*" Acao : coordena
+    Acao "1" *-- "1" ClassificacaoTematica : possui
+    Acao "1" o-- "0..*" AcaoFilhaVinculada : agrega filhas (programa)
+    Acao "0..1" --> "0..*" Acao : vincula (programa guarda-chuva)
+```
+# Dicionário de Dados Publicos 
+
+Este documento descreve os metadados e atributos das ações de extensão e ensino extraídos publicamente do **SRC/Ifes** (Sistema de Registro e Emissão de Certificados), sem a necessidade de autenticação ou credenciais de administrador.
+
+---
+
+## 1. Entidade Principal: `Ação`
+
+Dados extraídos da consulta pública (`consulta-acao.xhtml`) e da ficha detalhada de cada ação (`detalha-acao.xhtml`).
+
+| Campo (Atributo) | Rótulo no SRC | Tipo de Dado | Obrigatório? | Descrição | Exemplo de Valor |
+| :--- | :--- | :--- | :---: | :--- | :--- |
+| **`acao_id`** | *(Parâmetro `?acao=`)* | Texto / Numérico | Sim | Identificador primário interno da ação no SRC. | `"5646"` |
+| **`processo`** | `Processo nº` | Texto | Sim | Número do processo administrativo formal no protocolo/SIPAC do Ifes. | `"23158.001712/2024-14"` |
+| **`titulo`** | `Título ação` | Texto | Sim | Nome oficial do projeto, curso, evento ou programa. | `"Fábrica de Ideias - Robótica Educacional"` |
+| **`natureza`** | `Natureza` | Texto (Enum) | Sim | Finalidade acadêmica institucional da ação. | `"Extensão"` ou `"Ensino"` |
+| **`tipo`** | `Tipo ação` | Texto (Enum) | Sim | Modalidade/formato da ação conforme regulamento institucional. | `"Projeto"`, `"Curso"`, `"Evento"`, `"Programa"` |
+| **`coordenador`** | `Coordenador(a)` | Texto | Sim | Nome completo do servidor (docente ou TAE) responsável pela coordenação. | `"João da Silva"` |
+| **`campus`** | *(Dropdown)* | Texto | Sim | Campus do Ifes onde a ação é sediada e executada. | `"Serra"`, `"Vitória"`, `"Vila Velha"` |
+| **`fomento`** | `Fomento` | Texto (Enum) | Não | Origem e status de recursos financeiros da ação. | `"Sem fomento"`, `"Com fomento interno"`, `"Com fomento externo"` |
+| **`acao_vinculante`** | `Ação vinculante` | Texto | Não | Nome do programa guarda-chuva ao qual este projeto/curso está vinculado. | `"PROGRAMA LAMPEX"` |
+| **`grande_area`** | `Grande área conhecimento` | Texto (CNPq) | Não | Macroárea do conhecimento conforme árvore oficial da CAPES/CNPq. | `"Ciências Exatas e da Terra"`, `"Engenharias"` |
+| **`area_tematica_principal`** | `Área temática principal` | Texto (FORPROEX) | Não | Linha temática de extensão universitária nacional. | `"Tecnologia e Produção"`, `"Educação"` |
+| **`area_tematica_secundaria`** | `Área temática secundária` | Texto (FORPROEX) | Não | Linha temática complementar (se informada). | `"Trabalho"`, `"Comunicação"` |
+| **`relatorio_aprovado`** | `Relatório aprovado` | Texto (Booleano) | Não | Indica se o relatório final de prestação de contas/atividades foi aprovado. | `"Sim"`, `"Não"`, ou vazio (em andamento) |
+| **`data_cadastro`** | `Data de cadastro` | Data (`DD/MM/AAAA`) | Não | Data de submissão/registro da ação no SRC. | `"15/03/2023"` |
+| **`data_ultimo_relatorio`** | `Data último relatório` | Data (`DD/MM/AAAA`) | Não | Data em que o último relatório de acompanhamento foi submetido. | `"10/12/2023"` |
+| **`resumo`** | `Resumo` | Texto longo | Não | Descrição detalhada dos objetivos, justificativa e metodologia da ação. | `"O projeto visa capacitar estudantes..."` |
+| **`url_detalhe`** | *(Gerado)* | URL | Sim | Link web direto para visualização da ficha no portal público. | `https://src.ifes.edu.br/src/public/detalha-acao.xhtml?acao=5646` |
+
+---
+
+## 2. Entidade: `Ação Filha Vinculada` (Sub-ações de um Programa)
+
+Quando uma ação possui o tipo **"Programa"**, ela pode agregar ações filhas públicas listadas em `consulta-acao-vinculada.xhtml?acao_vinculante=<acao_id>`.
+
+| Campo | Tipo de Dado | Descrição | Exemplo de Valor |
+| :--- | :--- | :--- | :--- |
+| **`processo`** | Texto | Número do processo da ação filha vinculada. | `"23158.002130/2024-51"` |
+| **`titulo`** | Texto | Título da ação filha vinculada. | `"Oficina de Introdução a Arduino"` |
+| **`natureza`** | Texto | Natureza da ação filha (`Extensão` ou `Ensino`). | `"Extensão"` |
+| **`tipo`** | Texto | Modalidade da ação filha (`Projeto`, `Curso`, etc.). | `"Curso"` |
+
+---
+
+## 3. Campos Opcionais de Enriquecimento por IA (`src-etl-enrich`)
+
+Campos adicionados não-destrutivamente via chamada à API do Mistral AI quando as áreas originais do SRC estão vazias:
+
+| Campo | Tipo de Dado | Descrição | Exemplo de Valor |
+| :--- | :--- | :--- | :--- |
+| **`grande_area_inferida`** | Texto | Grande Área CNPq deduzida a partir do Título e Resumo. | `"Engenharias"` |
+| **`area_tematica_inferida`** | Texto | Área temática FORPROEX deduzida a partir do Título e Resumo. | `"Tecnologia e Produção"` |
+| **`_inferencia`** | Objeto JSON | Metadados do preenchimento: modelo de linguagem, score de confiança e data. | `{"modelo": "mistral-small-latest", "confianca": 0.92}` |
+
+---
