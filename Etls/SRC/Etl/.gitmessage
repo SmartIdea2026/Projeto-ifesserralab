@@ -1,0 +1,24 @@
+# <tipo>(<escopo>): <descrição curta em imperativo, max 72 chars>
+#
+# Tipos permitidos:
+#   feat     - nova funcionalidade
+#   fix      - correção de bug
+#   docs     - apenas documentação
+#   style    - formatação, sem mudança de lógica
+#   refactor - refatoração sem feat ou fix
+#   test     - adicionar ou corrigir testes
+#   chore    - build, configs, dependências
+#
+# Escopo (exemplos): US-001, sprint-03, templates, agents, auth, dashboard
+#
+# Exemplo:
+#   feat(US-003): adicionar validação de email no formulário de login
+#
+# --- Corpo (opcional) ---
+# Explique o POR QUÊ da mudança, não o o quê (o diff já mostra o quê).
+# Separe do título com uma linha em branco.
+#
+#
+# --- Footer (opcional) ---
+# Closes #US-XXX
+# BREAKING CHANGE: descreva a mudança disruptiva aqui

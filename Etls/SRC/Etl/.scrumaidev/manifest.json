@@ -1,0 +1,529 @@
+{
+  "adapter": {
+    "api_version": 1,
+    "capabilities": {
+      "commands": false,
+      "hooks": false,
+      "multi_install_safe": true,
+      "project_instructions": true,
+      "skills": true,
+      "subagents": false
+    },
+    "display_name": "Google Antigravity",
+    "id": "antigravity",
+    "model_policy": "inherit-session-model"
+  },
+  "core_sha256": "a8d9dbc7ddf5ae56ec6f52fa1b4ddc8ef7f5612ac903c458e3e4e1c152c55855",
+  "files": [
+    {
+      "path": ".agents/rules/coding-standards.md",
+      "role": "managed",
+      "sha256": "09eb52a8bd37cc2f581a61869e3c4e51578eb378e3aa91f1245dcb53ada34ab3"
+    },
+    {
+      "path": ".agents/skills/architect/SKILL.md",
+      "role": "managed",
+      "sha256": "3e9c9a1f9dde761796147ad64d817a74b1304a3ea4d8feeabf1c1633a7381721"
+    },
+    {
+      "path": ".agents/skills/backend-python/SKILL.md",
+      "role": "managed",
+      "sha256": "cb0c881a82488dfdfa253b4b7e6c01a2d7f879567e07582102469cf8b00861d1"
+    },
+    {
+      "path": ".agents/skills/frontend-vue/SKILL.md",
+      "role": "managed",
+      "sha256": "8ec2825e26d2754f6b73f03f023908ab0c058ca9e2be0df5efce883cb2efea7b"
+    },
+    {
+      "path": ".agents/skills/qa-engineer/SKILL.md",
+      "role": "managed",
+      "sha256": "7b509da37d982ed6e166b463330278849ecc4ffa6a42433ae64c2f5499fad8f9"
+    },
+    {
+      "path": ".agents/skills/react-expert/SKILL.md",
+      "role": "managed",
+      "sha256": "ca438b711bb4cda56243e6e1570bb2624f8d1b913f2024315a1c684494104046"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-code-review/SKILL.md",
+      "role": "adapter",
+      "sha256": "244de72d9e9976442a2ee894c507ab11b23f9b243c5449e606db282ac53448bd"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-create-user-story/SKILL.md",
+      "role": "adapter",
+      "sha256": "57a473099661018f8b46a45993736e1c7cbf3a953381be229ec8070584fa0e18"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-deploy/SKILL.md",
+      "role": "adapter",
+      "sha256": "b003bf419238a522b5c118ab5caf278d40de0482f20bc5758b393209ca219dad"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-discover/SKILL.md",
+      "role": "adapter",
+      "sha256": "d0fd3ef4ef6c8c8b1192a87d7e706b0c2c92c04099fd868fa717ad15f38a6e84"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-e2e-test/SKILL.md",
+      "role": "adapter",
+      "sha256": "cb6d5443f13371bb8316e4de3fc8ee94f817491d74b32461524a481e7022fd87"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-feature-development/SKILL.md",
+      "role": "adapter",
+      "sha256": "abcc19ee7b0f8528d836b1273a123cd794804a5a3c4f222b6706d2955299ebf2"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-init-project/SKILL.md",
+      "role": "adapter",
+      "sha256": "85ed4feeb2b76d9ab6644deeec4fc7947e4f3f8e7d94437898f7070853a999f1"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-integrate-backend/SKILL.md",
+      "role": "adapter",
+      "sha256": "8d9173922b267118d7af88fd2214ac36ac734b3bb947e395fc7bad22b12cd192"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-publish-github-planning/SKILL.md",
+      "role": "adapter",
+      "sha256": "8b3c3be7847895c8af9231c21c395fbb00502eb11a604e78871866d739a96e9b"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-requirements/SKILL.md",
+      "role": "adapter",
+      "sha256": "44fd97f7f24139456112fcd5b2ff1cf3506fc9cc3762008f08d2d86cb9a239f5"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-scope-idea/SKILL.md",
+      "role": "adapter",
+      "sha256": "86b3fda75a3210c5671cf7874234522d3c32aed368dfb75684b18ddd9111e0aa"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-sprint-planning/SKILL.md",
+      "role": "adapter",
+      "sha256": "191b0bb3a9b670ef7cba9231ee14afb3e5de21f085744d21166ed2cafd86e28a"
+    },
+    {
+      "path": ".agents/skills/scrumaidev-sprint-retrospective/SKILL.md",
+      "role": "adapter",
+      "sha256": "57f6851c966925308a7966f364ab69110d1b8016490873b4703c6dde174f1bb2"
+    },
+    {
+      "path": ".agents/skills/security-expert/SKILL.md",
+      "role": "managed",
+      "sha256": "b97100ed8d450487b3cefa437e4d46069e790f48fbdd275006609761bff881e8"
+    },
+    {
+      "path": ".agents/skills/skill-creator/LICENSE.txt",
+      "role": "managed",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+    },
+    {
+      "path": ".agents/skills/skill-creator/SKILL.md",
+      "role": "managed",
+      "sha256": "cebdc7270edea2d6562f695a2b862847b41ca8e60dab4208298f06282290e7b3"
+    },
+    {
+      "path": ".agents/skills/skill-creator/agents/analyzer.md",
+      "role": "managed",
+      "sha256": "bf68f4cac5a56c673a928c2e6d619586c5b93ea364026ab37547772cb45a663a"
+    },
+    {
+      "path": ".agents/skills/skill-creator/agents/comparator.md",
+      "role": "managed",
+      "sha256": "fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e"
+    },
+    {
+      "path": ".agents/skills/skill-creator/agents/grader.md",
+      "role": "managed",
+      "sha256": "57134da0c1a4eea33fbd74a1c9c44aa814f07d6bc64de303edb586f941e5d21a"
+    },
+    {
+      "path": ".agents/skills/skill-creator/assets/eval_review.html",
+      "role": "managed",
+      "sha256": "ce477dcc74dc1c0d1d3352646a79167b5a63634e936b1019160025065974e452"
+    },
+    {
+      "path": ".agents/skills/skill-creator/eval-viewer/generate_review.py",
+      "role": "managed",
+      "sha256": "fc9d1b9243fe5ab6012ebd579bd76d0035de1b79fd3b969de114defab26478fb"
+    },
+    {
+      "path": ".agents/skills/skill-creator/eval-viewer/viewer.html",
+      "role": "managed",
+      "sha256": "a53213426ee1100441d701a3a0d49cda7a842f992d2c36463f4d3cc0258575fa"
+    },
+    {
+      "path": ".agents/skills/skill-creator/references/schemas.md",
+      "role": "managed",
+      "sha256": "8e8876180a8989b406a4d3edddf875b04cdfd5805cc8616686d552b11ce4455f"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/__init__.py",
+      "role": "managed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/aggregate_benchmark.py",
+      "role": "managed",
+      "sha256": "123ef128ea5ccc01a4b1ac212ef5567f21e9c13d3d240609780beeb3200c49aa"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/generate_report.py",
+      "role": "managed",
+      "sha256": "13df7118a3c50c83c4c3250a606d5f2b20b25a3d44cbc392b3d669ec75281453"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/improve_description.py",
+      "role": "managed",
+      "sha256": "87d864570220b699fac52da309d2d6efdb060647bfebc74f768128e646accf80"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/package_skill.py",
+      "role": "managed",
+      "sha256": "1a33059b0db1ef73375d46d513e5ea81369d2e8838c970597b0d52ddef8d1c0f"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/quick_validate.py",
+      "role": "managed",
+      "sha256": "67cf5703402013936c8fb75ad6a1afecd8841d45cc5e606b634eb05825fde365"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/run_eval.py",
+      "role": "managed",
+      "sha256": "43e3b8f80dbf69c343967ba77e268fae991d9fa3ed68b32a0ff02532cd48657f"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/run_loop.py",
+      "role": "managed",
+      "sha256": "7bd6f674203168520517eec94c55f493c0d154339b061b4d7c0f0dad187d0f21"
+    },
+    {
+      "path": ".agents/skills/skill-creator/scripts/utils.py",
+      "role": "managed",
+      "sha256": "3af8ae62c40c73ab712207436a0d9a981e845f25c5a7040229eb189cc8e45bb1"
+    },
+    {
+      "path": ".agents/skills/story-refiner/SKILL.md",
+      "role": "managed",
+      "sha256": "c97410bab28e4d77ab505b298ca40a54f33e8383f05c7dc7505568e1f774fa30"
+    },
+    {
+      "path": ".agents/skills/technical-writer/SKILL.md",
+      "role": "managed",
+      "sha256": "7d3ccb2109cb42659d9696bf8b40b49127ba888f71efc36bd8cf29a95e6d666d"
+    },
+    {
+      "path": ".agents/workflows/code-review.md",
+      "role": "managed",
+      "sha256": "4ccfb4a78cba632cded63e2565ae7bfc31a791224ead5d4e0175034430ac5c43"
+    },
+    {
+      "path": ".agents/workflows/create-user-story.md",
+      "role": "managed",
+      "sha256": "be763692e1ff71187160eae77bbf4a8fe8e6be18dcc3c86697e99d954fee7430"
+    },
+    {
+      "path": ".agents/workflows/deploy.md",
+      "role": "managed",
+      "sha256": "5e39b20f3701374e9eb020fdf330555ded5c1b58d4b8487765eada2769d478b5"
+    },
+    {
+      "path": ".agents/workflows/discover.md",
+      "role": "managed",
+      "sha256": "8687ee28d6da64fe472300a5f5635f5f0db7ba9bc5e76c2c7472af2c84304a6c"
+    },
+    {
+      "path": ".agents/workflows/e2e-test.md",
+      "role": "managed",
+      "sha256": "320dcbafe49096ad395c236c50affa436e23efb9aac48b45c1e3293552336a37"
+    },
+    {
+      "path": ".agents/workflows/feature-development.md",
+      "role": "managed",
+      "sha256": "3582d2fea4bae3fc61ef4626b4ced93a9b6c4c5e25867bd03576a2b251a1579d"
+    },
+    {
+      "path": ".agents/workflows/init-project.md",
+      "role": "managed",
+      "sha256": "88a0485897ea00b82415c69b1c032c617e1177f5bde46317f1bac767568b3e1c"
+    },
+    {
+      "path": ".agents/workflows/integrate-backend.md",
+      "role": "managed",
+      "sha256": "d7c29dce5e6f6d2bc4b56b396faa511242117be7947a7a946372d84ad8acea2b"
+    },
+    {
+      "path": ".agents/workflows/publish-github-planning.md",
+      "role": "managed",
+      "sha256": "6744d71dca7815ddaa85e3c4cfd2952b77024ea497b217abe76234be0d3aa40a"
+    },
+    {
+      "path": ".agents/workflows/requirements.md",
+      "role": "managed",
+      "sha256": "685144d23c1c16643b4ca583b7ac666928276a49788c3ac57840d40bd5e97cb1"
+    },
+    {
+      "path": ".agents/workflows/scope-idea.md",
+      "role": "managed",
+      "sha256": "ab381a9dfa182ada5915addbbb5b02ef379de702ad8e1e33aea69c332512c7bf"
+    },
+    {
+      "path": ".agents/workflows/sprint-planning.md",
+      "role": "managed",
+      "sha256": "6580c09310be85fd783df49ca2b12e7f365140d8bc65a18617a95ca13271610b"
+    },
+    {
+      "path": ".agents/workflows/sprint-retrospective.md",
+      "role": "managed",
+      "sha256": "1163dc894eeaf4f303225f045d0cb819ab0839d6b68431b568a5340389c7eb3e"
+    },
+    {
+      "path": ".gitmessage",
+      "role": "seed",
+      "sha256": "dabd95c1a804b7b31ded85ed21ff21744c1a0c522a249dc932daa05fe7a8b073"
+    },
+    {
+      "path": ".scrumaidev/AGENTS.md",
+      "role": "managed",
+      "sha256": "1e60bc3aaf4c9355b1731e08d8c11f0105d191a4d86376d5f1e846183bfa4267"
+    },
+    {
+      "path": "AGENTS.md",
+      "role": "root-agents",
+      "sha256": "1e60bc3aaf4c9355b1731e08d8c11f0105d191a4d86376d5f1e846183bfa4267"
+    },
+    {
+      "path": "docs/adr/adr_template.md",
+      "role": "seed",
+      "sha256": "c4e3ea665758215ada071b4edc96b8407eb025944d1e58b307291b63c30db321"
+    },
+    {
+      "path": "docs/adr/readme.md",
+      "role": "seed",
+      "sha256": "b871f1ec985210c7f37d46c5c882e63d0e2cb400fa89e68510e0afb19ca9eeb4"
+    },
+    {
+      "path": "docs/assumptions.md",
+      "role": "seed",
+      "sha256": "d3662df80385705cc088c6f612eff095ae4a2c6492764bdb8796b8f676239676"
+    },
+    {
+      "path": "docs/bdd/bdd_template.feature",
+      "role": "seed",
+      "sha256": "3dbad6b3a70446db2e2a5f2fba968a04c95f42e9836d90e18a681c279683f1f1"
+    },
+    {
+      "path": "docs/bdd/readme.md",
+      "role": "seed",
+      "sha256": "52baea674cd5faa9655a5f43e6df04f254fa2abf0cfdf0c547cbadb7cc6837f0"
+    },
+    {
+      "path": "docs/context.md",
+      "role": "seed",
+      "sha256": "bcccfc89244a3ba0183d93e7fc56a62c3cfcfe4b81a1760a68899a2588f8cb22"
+    },
+    {
+      "path": "docs/contracts/adapters.md",
+      "role": "seed",
+      "sha256": "3a797bf5ea068ce34fd1d735165fadc315d807a93d86e385abdce92f6a3d64ef"
+    },
+    {
+      "path": "docs/contracts/contract_governance.md",
+      "role": "seed",
+      "sha256": "757156e7d0ad95d65571bf8340c9b497c30f669e1c819c2588ee415b996dc83e"
+    },
+    {
+      "path": "docs/contracts/error_standard.yaml",
+      "role": "seed",
+      "sha256": "14437b548295b8d9f98b6b675f33e2ce2c8eefceb1061002edbd842bc8e6d771"
+    },
+    {
+      "path": "docs/contracts/http_api_contract_template.yaml",
+      "role": "seed",
+      "sha256": "966095fc538f059a7561e8de9cc4b3e8e01846226f51e046ce6b590d43cd45d6"
+    },
+    {
+      "path": "docs/decisoes_governanca_us_spec_bdd.md",
+      "role": "seed",
+      "sha256": "d66e8b3fc7695b74f42a863ce6c1d0045f9cd2eace1ddc84a12e5002165b82ab"
+    },
+    {
+      "path": "docs/definition_of_done.md",
+      "role": "seed",
+      "sha256": "1701af138d721b1523018a62d7f60d97d40252f09fab3554c40a440c3a0e8553"
+    },
+    {
+      "path": "docs/discovery/.gitkeep",
+      "role": "seed",
+      "sha256": "ba39f7c60a95cffb68d932044eadf40c869c87189dc9875e63c4598d9eeda22c"
+    },
+    {
+      "path": "docs/discovery_requirements.md",
+      "role": "seed",
+      "sha256": "e3e9a8859237ac28b479add9ebb16f2dd7a6f56c883cc110fbaa5668eab3ae87"
+    },
+    {
+      "path": "docs/engineering_playbook.md",
+      "role": "seed",
+      "sha256": "94732dd96447d8268774dccedbc67d8d2e0f0487cd67457fb6bb835492913906"
+    },
+    {
+      "path": "docs/git_workflow.md",
+      "role": "seed",
+      "sha256": "a7a9df6c4248589b2a5b2548e722dd2defb171df498eb3e4766da0b6c5c7963b"
+    },
+    {
+      "path": "docs/github_planning.md",
+      "role": "seed",
+      "sha256": "e91b9c1ea61cb1c5397571214e381171b929b7e91846696a172e557283a0ae04"
+    },
+    {
+      "path": "docs/governance_changelog.md",
+      "role": "seed",
+      "sha256": "72ed27f0924eccc3f09a0f1a5b501065263e9688122297dbb23b8b125d28dd66"
+    },
+    {
+      "path": "docs/maturity_model.md",
+      "role": "seed",
+      "sha256": "a7381c22ad18aba964731e83e51e548fce2f12bb5b37cf8e61b69a800bcb89a3"
+    },
+    {
+      "path": "docs/project_manifest.md",
+      "role": "seed",
+      "sha256": "65f0b6c8429b43a28ee877d6ae53f8e614603b4be7ccc58389b552d34939b057"
+    },
+    {
+      "path": "docs/requirements/.gitkeep",
+      "role": "seed",
+      "sha256": "bdd623e064dac2d617a5eaf549eafea932cbdc42bf0459e40f8360fcc29c226e"
+    },
+    {
+      "path": "docs/retrospectives/.gitkeep",
+      "role": "seed",
+      "sha256": "e3934b70bcaa7ccbae1344b0419a27324cdaf7f2e8fc88e37682cedb0c5349f6"
+    },
+    {
+      "path": "docs/specs/spec_template.md",
+      "role": "seed",
+      "sha256": "5fd4b1d5f2addefa5a2bbbbe80ea42e78cfeda46828f3122dd32ba46c47e348f"
+    },
+    {
+      "path": "docs/sprints/.gitkeep",
+      "role": "seed",
+      "sha256": "bc64ea1322f437c74a1d9f84912efec0a0532c11f0c5377393bd24716ee0c712"
+    },
+    {
+      "path": "docs/stories/.gitkeep",
+      "role": "seed",
+      "sha256": "d859e13fa531f300892e4c8b67c3d84e30710a0c8c7ed4e5f98493add6cabda4"
+    },
+    {
+      "path": "docs/tasks/.gitkeep",
+      "role": "seed",
+      "sha256": "0a7c3b2d37dc5e288444578d32bdc7935dc9b84aa4d378f48d279352fb9106c3"
+    },
+    {
+      "path": "docs/todo.md",
+      "role": "seed",
+      "sha256": "eedf09118d2e264d9d2938e39335bb4f6ebf859275626ed1488d5b702d8eefc0"
+    },
+    {
+      "path": "docs/token_budget.md",
+      "role": "seed",
+      "sha256": "77edc199205bce0b49554af7ed5ccc723555085f3c4441523ddf39ffa32786a2"
+    },
+    {
+      "path": "docs/work_classification.md",
+      "role": "seed",
+      "sha256": "14f86aea02b7b04b04c2b9ed94b8bc88aa177cd666b53797dbef20a92ea5c898"
+    },
+    {
+      "path": "scripts/agileaidev_gate.py",
+      "role": "managed",
+      "sha256": "f403d2e44d23873cc30943acdf953082f47b3e4a39d5cd22102d118d93a3a90b"
+    },
+    {
+      "path": "templates/bug_report.md",
+      "role": "seed",
+      "sha256": "5977d2533c5f135739db5d1efe75a7ecf710e8bebb011a596b9ab8e4aaf7579e"
+    },
+    {
+      "path": "templates/context_summary.md",
+      "role": "seed",
+      "sha256": "9c4482cf48863955a13c0022fe4179780253ec24ac2e76cb9ced1503b4a20f74"
+    },
+    {
+      "path": "templates/daily_standup.md",
+      "role": "seed",
+      "sha256": "442968a7a03cb0191634c0557bcae6d07b591849e6807557faad696288a1cc46"
+    },
+    {
+      "path": "templates/debug_template.md",
+      "role": "seed",
+      "sha256": "b1b7518370fcc31001d60db3ea0dda403da7b0a4608157bc97697ee398cf7700"
+    },
+    {
+      "path": "templates/definition_of_done.md",
+      "role": "seed",
+      "sha256": "a00810e81f03e4a9c2fcf34173938031f4732156bd80c69b3c1e3c3a6b09ac11"
+    },
+    {
+      "path": "templates/discovery.md",
+      "role": "seed",
+      "sha256": "6fcedb0c23ae898c406e4c8dab66c8fa050301f944044d772fc6a2702f29f0c2"
+    },
+    {
+      "path": "templates/postmortem.md",
+      "role": "seed",
+      "sha256": "09a3c44c7fa33df3c5f331fe96890849c4df5261cb4c28314adaf0f121dce14a"
+    },
+    {
+      "path": "templates/pr_review_template.md",
+      "role": "seed",
+      "sha256": "f83801b14e73c96232a0cbff5360f1a40ff6babe48fe6c842dea3ff5a1d3efa2"
+    },
+    {
+      "path": "templates/product_backlog.md",
+      "role": "seed",
+      "sha256": "25f2d48ed77b309ce53fafe9d9e21a36c421b773b7cc2bac9b21400c5c3f1fec"
+    },
+    {
+      "path": "templates/requirements.md",
+      "role": "seed",
+      "sha256": "81ea43d3aabc043f9de455145953f35ac199ba27fbede45fb395b1b70e89bbcf"
+    },
+    {
+      "path": "templates/retrospective.md",
+      "role": "seed",
+      "sha256": "527604c731a8102805ee053b9c66aed1bbc0818ba2e27c20b5caaba8403956a9"
+    },
+    {
+      "path": "templates/sprint_planning.md",
+      "role": "seed",
+      "sha256": "802422c9e6f4fc4eb0c9d4830ff80af55578b94469c47b0eda162f6366a22b72"
+    },
+    {
+      "path": "templates/task_breakdown.md",
+      "role": "seed",
+      "sha256": "0f34d4d3a4ae8ed296c38c16df3f9b04c0a6eb816c24b5cdc06844efdd76682f"
+    },
+    {
+      "path": "templates/user_story.md",
+      "role": "seed",
+      "sha256": "8d62edbd7449b8e2ad66185af18dcbb7566170a8b1db6b399ac9ac6582998752"
+    },
+    {
+      "path": "templates/work_classification.md",
+      "role": "seed",
+      "sha256": "8c6a42fbfe2d9917fe4c32f76610288ee34e5fa95099e9facf7732230ab45b9b"
+    }
+  ],
+  "harness": "antigravity",
+  "model_policy": "inherit-session-model",
+  "runtime_sha256": "c1416c366db9a5cecd749ded00cc109941b56237b0f6af893c6c1ed97dc63697",
+  "schema_version": 2,
+  "scrumaidev_version": "0.4.0"
+}

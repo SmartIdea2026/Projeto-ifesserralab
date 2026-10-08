@@ -1,0 +1,163 @@
+openapi: 3.1.0
+info:
+  title: "[Nome do contrato]"
+  version: 0.1.0
+  summary: "[Boundary observavel coberto por este contrato]"
+  description: >
+    Contrato HTTP governado em estilo contract-first.
+    Renomeie este arquivo para `docs/contracts/<nome>.yaml`
+    quando o contrato deixar de ser template.
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+
+x-governance:
+  user_story: US-XXX
+  spec: docs/specs/<nome>.yaml
+  bdd:
+    - docs/bdd/<nome>.feature
+  bounded_context: "[meetings|participants|reports|settings]"
+  data_model_refs:
+    - "[database/... ou N/A]"
+  error_standard: docs/contracts/error_standard.yaml
+  notes:
+    - "Derive recursos e estados a partir da US e do modelo de dados, nao das tabelas internas."
+
+servers:
+  - url: https://api.example.com
+    description: Production
+  - url: http://localhost:8000
+    description: Local
+
+tags:
+  - name: Meetings
+    description: Meeting management operations
+
+paths:
+  /v1/meetings:
+    post:
+      tags:
+        - Meetings
+      summary: Create a meeting
+      description: >
+        Cria uma reuniao com dados basicos e participantes selecionados.
+      operationId: createMeeting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMeetingRequest"
+            examples:
+              default:
+                value:
+                  title: Planejamento trimestral
+                  regionId: reg-sudeste
+                  scheduledAt: "2026-04-10T14:00:00Z"
+                  location: Sala 3
+                  participantIds:
+                    - part-001
+                    - part-002
+                  content:
+                    hasVideo: true
+                    hasAudio: false
+                    hasText: true
+      responses:
+        "201":
+          description: Meeting created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meeting"
+        "400":
+          $ref: "./error_standard.yaml#/components/responses/BadRequest"
+        "404":
+          $ref: "./error_standard.yaml#/components/responses/NotFound"
+        "409":
+          $ref: "./error_standard.yaml#/components/responses/Conflict"
+        "422":
+          $ref: "./error_standard.yaml#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "./error_standard.yaml#/components/responses/InternalServerError"
+
+components:
+  schemas:
+    CreateMeetingRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - regionId
+        - scheduledAt
+      properties:
+        title:
+          type: string
+          minLength: 1
+        regionId:
+          type: string
+          description: Stable identifier from the region aggregate.
+        scheduledAt:
+          type: string
+          format: date-time
+        location:
+          type: string
+        participantIds:
+          type: array
+          items:
+            type: string
+        content:
+          $ref: "#/components/schemas/MeetingContentFlags"
+
+    MeetingContentFlags:
+      type: object
+      additionalProperties: false
+      properties:
+        hasVideo:
+          type: boolean
+        hasAudio:
+          type: boolean
+        hasText:
+          type: boolean
+
+    ParticipantRef:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    Meeting:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - title
+        - regionId
+        - status
+        - scheduledAt
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        regionId:
+          type: string
+        status:
+          type: string
+          enum:
+            - pending
+            - processing
+            - completed
+            - error
+        scheduledAt:
+          type: string
+          format: date-time
+        location:
+          type: string
+        participants:
+          type: array
+          items:
+            $ref: "#/components/schemas/ParticipantRef"

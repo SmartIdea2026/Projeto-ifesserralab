@@ -1,0 +1,185 @@
+openapi: 3.1.0
+info:
+  title: Shared Error Standard
+  version: 1.0.0
+  summary: Shared error schema and reusable responses
+  description: >
+    Modelo compartilhado de erro para contracts governados deste repositorio.
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+
+components:
+  schemas:
+    ProblemDetails:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - code
+        - title
+        - detail
+        - status
+        - traceId
+      properties:
+        type:
+          type: string
+          description: Stable URI-like classifier for the error family.
+          examples:
+            - https://example.com/problems/validation-error
+        code:
+          type: string
+          pattern: "^[A-Z0-9_]+$"
+          description: Stable machine-readable code for the exact error.
+          examples:
+            - MEETING_MEDIA_REQUIRED
+        title:
+          type: string
+          minLength: 1
+          description: Short stable summary safe for end users.
+        detail:
+          type: string
+          minLength: 1
+          description: Specific explanation of what failed and why.
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        instance:
+          type: string
+          description: Request-specific URI or identifier when available.
+        traceId:
+          type: string
+          description: Correlation id for logs and support.
+        invalidParams:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvalidParam"
+
+    InvalidParam:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - reason
+      properties:
+        name:
+          type: string
+        reason:
+          type: string
+        location:
+          type: string
+          enum:
+            - path
+            - query
+            - header
+            - body
+
+  responses:
+    BadRequest:
+      description: The request is syntactically valid but semantically invalid.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          examples:
+            missingMeetingContent:
+              value:
+                type: https://example.com/problems/validation-error
+                code: MEETING_MEDIA_REQUIRED
+                title: Conteudo obrigatorio ausente
+                detail: Informe ao menos um conteudo: video, audio ou texto.
+                status: 400
+                traceId: req-123
+                invalidParams:
+                  - name: content
+                    reason: Ao menos um entre hasVideo, hasAudio ou hasText deve ser verdadeiro.
+                    location: body
+
+    Unauthorized:
+      description: Authentication is required or invalid.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+
+    NotFound:
+      description: The target resource was not found.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          examples:
+            regionNotFound:
+              value:
+                type: https://example.com/problems/not-found
+                code: REGION_NOT_FOUND
+                title: Recurso nao encontrado
+                detail: A regiao informada nao esta cadastrada.
+                status: 404
+                traceId: req-456
+
+    Conflict:
+      description: The request conflicts with the current state of the resource.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          examples:
+            duplicateParticipantEmail:
+              value:
+                type: https://example.com/problems/conflict
+                code: PARTICIPANT_EMAIL_ALREADY_EXISTS
+                title: Conflito de unicidade
+                detail: Ja existe um participante com este e-mail.
+                status: 409
+                traceId: req-789
+
+    UnprocessableEntity:
+      description: The request is well-formed but violates business rules.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          examples:
+            minutesGenerationNotReady:
+              value:
+                type: https://example.com/problems/business-rule
+                code: MINUTES_GENERATION_NOT_READY
+                title: Recurso ainda nao pode ser processado
+                detail: A ata ainda nao pode ser gerada porque a transcricao nao foi concluida.
+                status: 422
+                traceId: req-321
+
+    InternalServerError:
+      description: An unexpected internal failure happened.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          examples:
+            storageFailure:
+              value:
+                type: https://example.com/problems/internal-error
+                code: MEETING_ASSET_PERSISTENCE_FAILED
+                title: Falha ao persistir recurso
+                detail: Nao foi possivel salvar os arquivos da reuniao neste momento. Tente novamente usando o mesmo requestId.
+                status: 500
+                traceId: req-654
+
+x-error-guidelines:
+  principles:
+    - Use stable machine-readable codes.
+    - Keep title short and stable.
+    - Keep detail specific and safe.
+    - Avoid generic messages when the exact cause is known.
+    - Do not expose stack trace, SQL, secrets, provider payloads or internal paths.
+    - Populate invalidParams for validation errors when possible.
+  antiPatterns:
+    - "Erro interno."
+    - "Falha ao processar a solicitacao."
+    - "Dados invalidos."
+  recommendedCodes:
+    - MEETING_MEDIA_REQUIRED
+    - REGION_NOT_FOUND
+    - PARTICIPANT_EMAIL_ALREADY_EXISTS
+    - MINUTES_GENERATION_NOT_READY
+    - MEETING_ASSET_PERSISTENCE_FAILED

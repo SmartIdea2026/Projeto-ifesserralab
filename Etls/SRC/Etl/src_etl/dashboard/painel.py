@@ -1,0 +1,434 @@
+"""Painel único: combina relatório-base + indicadores em um HTML com abas.
+
+Tema no padrão de cores do **Horizon UI** (roxo/indigo, fundo navy-claro, cards
+arredondados com sombra suave; dark mode navy). Abas em CSS puro (sem JS).
+
+Reaproveita os blocos de `relatorio` e `indicadores`; sobrepõe a paleta
+categórica pela do Horizon.
+
+CLI:  src-etl-painel --acoes data/serra --part data/participacoes \
+                     --consolidado data/serra_consolidado.json --out painel.html
+"""
+
+from __future__ import annotations
+
+import json
+from html import escape
+from pathlib import Path
+
+from . import relatorio
+from .formados import agregar_formados, blocos_formados
+from .impacto import agregar_impacto, blocos_impacto
+from .indicadores import agregar_indicadores, blocos_indicadores
+from .rede import agregar_rede, blocos_rede
+from .forproex import agregar_forproex, blocos_forproex
+from .relatorio import (
+    _carregar_acoes,
+    _carregar_participacoes,
+    agregar,
+    blocos_relatorio,
+)
+
+# paleta categórica no espírito do Horizon UI (roxo/indigo + apoio)
+HORIZON_CAT = ["#4318FF", "#6AD2FF", "#01B574", "#FFB547", "#EE5D50",
+               "#7551FF", "#39B8FF", "#FFCF5C"]
+
+HORIZON_CSS = """
+/* Design system (skill ui-ux-pro-max): Data-Dense Dashboard
+   Primary #3B82F6 · CTA #F97316 · bg #F8FAFC · text #1E293B · Fira Sans + Fira Code */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
+:root{
+  color-scheme:light;
+  --plane:#f8fafc; --surface-1:#ffffff; --parchment:#f1f5f9; --pearl:#f8fafc;
+  --text-primary:#1e293b; --text-secondary:#475569; --muted:#64748b;
+  --grid:#e2e8f0; --border:#cbd5e1;
+  --series-1:#3b82f6; --series-2:#0d9488; --accent-focus:#2563eb; --cta:#f97316; --nav-bg:#ffffff;
+  --ok:#01B574;
+  --c1:#3b82f6; --c2:#0d9488; --c3:#d97706; --c4:#7c3aed; --c5:#0891b2; --c6:#db2777;
+  --row-hover:#eff6ff;
+  --radius:10px; --radius-sm:6px;
+  --mono:"Fira Code",ui-monospace,SFMono-Regular,monospace;
+}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme=light])){
+  color-scheme:dark;
+  --plane:#0f172a; --surface-1:#1e293b; --parchment:#334155; --pearl:#1e293b;
+  --text-primary:#f1f5f9; --text-secondary:#cbd5e1; --muted:#94a3b8;
+  --grid:#334155; --border:#475569;
+  --series-1:#60a5fa; --series-2:#2dd4bf; --accent-focus:#93c5fd; --cta:#fb923c; --nav-bg:#0f172a;
+  --ok:#05cd99;
+  --c1:#60a5fa; --c2:#2dd4bf; --c3:#fbbf24; --c4:#a78bfa; --c5:#22d3ee; --c6:#f472b6;
+  --row-hover:#1e3a5f;
+}}
+:root[data-theme=dark]{
+  color-scheme:dark;
+  --plane:#0f172a; --surface-1:#1e293b; --parchment:#334155; --pearl:#1e293b;
+  --text-primary:#f1f5f9; --text-secondary:#cbd5e1; --muted:#94a3b8;
+  --grid:#334155; --border:#475569;
+  --series-1:#60a5fa; --series-2:#2dd4bf; --accent-focus:#93c5fd; --cta:#fb923c; --nav-bg:#0f172a;
+  --ok:#05cd99;
+  --c1:#60a5fa; --c2:#2dd4bf; --c3:#fbbf24; --c4:#a78bfa; --c5:#22d3ee; --c6:#f472b6;
+  --row-hover:#1e3a5f;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--plane);color:var(--text-primary);
+font-family:"Fira Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a,button,label,summary{cursor:pointer}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{
+transition:none!important;animation:none!important}}
+/* ---- topbar (menu horizontal superior) ---- */
+.topbar{position:sticky;top:0;z-index:50;background:var(--nav-bg);
+border-bottom:1px solid var(--grid)}
+.topbar-in{max-width:1400px;margin:0 auto;padding:7px 24px;min-height:52px;
+display:flex;align-items:center;gap:18px}
+.brand{font-weight:700;font-size:15px;color:var(--text-primary);
+text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.brand::before{content:'';width:10px;height:10px;border-radius:3px;background:var(--series-1)}
+.brand small{color:var(--muted);font-weight:400;font-size:12px}
+.snav{display:flex;gap:2px;flex-wrap:nowrap;flex:1;justify-content:space-between;
+scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.snav a{white-space:nowrap}
+.snav a{display:flex;align-items:center;gap:5px;padding:6px 7px;border-radius:8px;
+text-decoration:none;color:var(--text-secondary);font-weight:500;font-size:12.5px;
+white-space:nowrap;transition:background .15s,color .15s}
+.snav a svg{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:2;
+stroke-linecap:round;stroke-linejoin:round}
+/* subtítulo da marca sai da barra horizontal (10 itens não cabem com ele sob o cap) */
+.brand small{display:none}
+.snav a:hover{color:var(--text-primary);background:var(--parchment)}
+.snav a.on{color:var(--series-1);background:color-mix(in srgb,var(--series-1) 12%,transparent)}
+.snav a:focus-visible{outline:2px solid var(--accent-focus);outline-offset:2px}
+/* hambúrguer (CSS-only, checkbox hack) — só aparece no mobile */
+.nav-toggle{position:absolute;width:1px;height:1px;margin:-1px;opacity:0;pointer-events:none}
+.nav-burger{display:none;margin-left:auto;flex:none;align-items:center;justify-content:center;
+width:42px;height:42px;border-radius:9px;border:1px solid var(--grid);background:var(--surface-1);
+color:var(--text-secondary)}
+.nav-burger svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.nav-burger .ic-close{display:none}
+.nav-toggle:focus-visible~.nav-burger{outline:2px solid var(--accent-focus);outline-offset:2px}
+.main{min-width:0}
+.wrap{max-width:1400px;margin:0 auto;padding:28px 24px 64px}
+.crumb{color:var(--muted);font-size:12px;margin:0 0 4px}
+.crumb b{color:var(--text-secondary);font-weight:600}
+header h1{margin:0 0 6px;font-size:26px;font-weight:700;line-height:1.2;
+letter-spacing:-.01em;text-wrap:balance}
+header .sub{color:var(--text-secondary);margin:0 0 6px;font-size:14.5px;max-width:72ch}
+@media (max-width:720px){.topbar-in{padding:0 12px;gap:10px}.brand small{display:none}
+header h1{font-size:22px}}
+/* hero (home de busca) */
+.wrap-hero{padding-top:7vh;text-align:center;position:relative}
+.wrap-hero::before{content:'';position:absolute;left:50%;top:-40px;transform:translateX(-50%);
+width:min(760px,90vw);height:220px;z-index:-1;pointer-events:none;
+background:radial-gradient(60% 100% at 50% 0,color-mix(in srgb,var(--series-1) 9%,transparent),transparent 70%)}
+.hero h1{font-size:40px;font-weight:700;line-height:1.12;letter-spacing:-.02em;margin:0 0 10px;
+color:var(--text-primary)}
+.hero .sub{margin:0 auto 8px;max-width:62ch;font-size:16px;color:var(--text-secondary)}
+@media (max-width:720px){.hero h1{font-size:28px}}
+.wrap-hero .busca{max-width:620px;margin:22px auto 0;display:block;text-align:left}
+.wrap-hero #res{text-align:left;max-width:980px;margin:0 auto}
+.wrap-hero #res .vazio{text-align:center;margin-top:12px}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.chips button{border:1px solid var(--grid);background:var(--surface-1);color:var(--text-secondary);
+border-radius:8px;padding:9px 15px;font-size:13px;font-weight:500;font-family:inherit;
+transition:background .15s,border-color .15s,color .15s;min-height:40px}
+.chips button:hover{border-color:var(--series-1);color:var(--series-1);
+background:color-mix(in srgb,var(--series-1) 6%,transparent)}
+.chips button:focus-visible{outline:2px solid var(--accent-focus);outline-offset:2px}
+/* KPI row data-dense */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:20px 0 6px}
+.tile{padding:14px 16px;background:var(--surface-1);border:1px solid var(--grid);
+border-radius:var(--radius);border-left:3px solid var(--series-1);
+transition:box-shadow .15s,border-color .15s}
+.tile:hover{box-shadow:0 1px 6px rgba(15,23,42,.07)}
+.tile-val{font-size:24px;font-weight:700;line-height:1.2;font-family:var(--mono);
+font-variant-numeric:tabular-nums;color:var(--text-primary)}
+.tile-lbl{color:var(--text-secondary);font-size:11.5px;margin-top:3px;font-weight:500;
+text-transform:uppercase;letter-spacing:.04em}
+.tile-sub{color:var(--muted);font-size:11.5px;margin-top:3px}
+section{margin-top:26px}
+.par2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.par2-item{min-width:0}
+.par2-h{font-size:13.5px;font-weight:600;margin:0 0 6px;color:var(--text-primary)}
+h2{font-size:16px;margin:0 0 2px;font-weight:600}
+.sec-desc{color:var(--text-secondary);font-size:13px;margin:0 0 8px}
+.card{background:var(--surface-1);border:1px solid var(--grid);border-radius:var(--radius);
+padding:16px;overflow-x:auto}
+.lbl{fill:var(--text-secondary);font-size:12px}
+.val{fill:var(--text-primary);font-size:12px;font-weight:600;font-family:var(--mono)}
+.vazio{color:var(--muted);margin:0;font-size:13px}
+.donut-wrap{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.donut-num{fill:var(--text-primary);font-size:24px;font-weight:600}
+.donut-cap{fill:var(--muted);font-size:11px}
+.leg{display:flex;flex-direction:column;gap:5px;min-width:220px}
+.leg-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.sw{width:11px;height:11px;border-radius:3px;flex:none}
+.leg-nome{flex:1}.leg-val{color:var(--text-secondary);font-family:var(--mono);font-size:12px}
+/* treemap (mapa de árvore) — rótulos sobre os quadros coloridos */
+.tm-hd{fill:var(--text-primary);font-size:12px;font-weight:700}
+.tm-hp{fill:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.tm-name{fill:#fff;font-size:11px;font-weight:700;paint-order:stroke;stroke:rgba(0,0,0,.45);stroke-width:2.4px;stroke-linejoin:round}
+.tm-val{fill:#fff;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;paint-order:stroke;stroke:rgba(0,0,0,.5);stroke-width:2.6px;stroke-linejoin:round}
+.tm-tile{transition:filter .12s}.tm-tile:hover{filter:brightness(1.08)}
+/* treemap interativo (drill-down): categoria -> iniciativa */
+.tmi{margin-top:6px}
+.tmi-crumbs{display:flex;align-items:center;gap:8px;font-size:13px;margin:2px 0 10px;
+min-height:32px;flex-wrap:wrap;color:var(--muted)}
+.tmi-crumbs button{appearance:none;border:1px solid var(--border);background:var(--surface-1);
+color:var(--series-1);font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:5px 11px;border-radius:6px}
+.tmi-crumbs button:hover{border-color:var(--series-1)}
+.tmi-crumbs button:focus-visible{outline:2px solid var(--accent-focus);outline-offset:2px}
+.tmi-crumbs .cur{font-weight:700;color:var(--text-primary)}
+.tmi-board{position:relative;width:100%;aspect-ratio:1000/560;background:var(--parchment);
+border-radius:8px;overflow:hidden;border:1px solid var(--grid)}
+.tmi-p{position:absolute;overflow:hidden;border-radius:6px}
+.tmi-p.clk{cursor:pointer}
+.tmi-p.clk:hover{outline:2px solid var(--series-1);outline-offset:-2px;z-index:6}
+.tmi-p.clk:focus-visible{outline:2px solid var(--accent-focus);outline-offset:-2px;z-index:6}
+.tmi-hd{position:absolute;left:0;right:0;top:0;height:22px;display:flex;align-items:center;gap:6px;
+padding:0 8px;font-size:11.5px;font-weight:700;color:var(--text-primary);white-space:nowrap;
+overflow:hidden;pointer-events:none;z-index:3}
+.tmi-hd .p{color:var(--muted);font-weight:600;margin-left:auto;font-variant-numeric:tabular-nums}
+.tmi-t{position:absolute;border-radius:5px;padding:5px 7px;overflow:hidden;display:flex;
+flex-direction:column;justify-content:flex-end;transition:filter .12s}
+.tmi-t:hover{filter:brightness(1.09)}
+.tmi-t .n{font-size:11px;font-weight:700;color:#fff;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.5);
+display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tmi-t .v{font-size:12px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;
+text-shadow:0 1px 2px rgba(0,0,0,.55);margin-top:2px}
+.tmi-t .v small{font-weight:700;opacity:.9}
+.tmi-tip{position:fixed;pointer-events:none;z-index:60;background:var(--text-primary);color:var(--surface-1);
+padding:8px 11px;border-radius:8px;font-size:12.5px;line-height:1.45;max-width:280px;
+box-shadow:0 10px 24px -8px rgba(0,0,0,.5);opacity:0;transition:opacity .1s}
+.tmi-tip.on{opacity:1}
+.tmi-tip .r{display:flex;justify-content:space-between;gap:16px;font-variant-numeric:tabular-nums;margin-top:2px}
+.tmi-tip .k{opacity:.7}
+footer{margin-top:36px;color:var(--muted);font-size:12px;
+border-top:1px solid var(--grid);padding-top:12px}
+.pii{background:var(--parchment);border-radius:var(--radius-sm);
+padding:10px 14px;font-size:12px;color:var(--text-secondary);margin-top:18px}
+.lista{max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.li{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;
+padding:7px 6px;border-bottom:1px solid var(--grid);font-size:13px;transition:background .15s}
+.li:hover{background:var(--row-hover)}
+.li4{grid-template-columns:1fr auto auto auto}
+.li-coord{color:var(--text-secondary);font-size:12px;white-space:nowrap}
+.li-tit{color:var(--text-primary)}
+.li-tipo{color:var(--muted);font-size:11px;border:1px solid var(--grid);
+border-radius:6px;padding:1px 8px;font-weight:500}
+.li-proc{color:var(--muted);font-family:var(--mono);font-size:11.5px}
+.net-lbl{fill:var(--text-secondary);font-size:11px;font-weight:600}
+.explica{margin-top:10px;border-top:1px solid var(--grid);padding-top:8px}
+.explica summary{color:var(--series-1);font-size:13px;font-weight:500}
+.explica summary:focus-visible{outline:2px solid var(--accent-focus);outline-offset:2px}
+.explica p{color:var(--text-secondary);font-size:13px;margin:8px 0 0;max-width:72ch}
+.nota{background:color-mix(in srgb,var(--cta) 10%,var(--surface-1));color:var(--text-primary);
+border-left:3px solid var(--cta);border-radius:var(--radius-sm);
+padding:10px 14px;font-size:13px;font-weight:500;margin:14px 0}
+/* abas: segmented compacto */
+.tabs>input{position:absolute;opacity:0;pointer-events:none}
+.tabbar{display:inline-flex;gap:2px;margin:18px 0 4px;flex-wrap:wrap;
+background:var(--parchment);border-radius:9px;padding:3px}
+.tabbar label{padding:7px 14px;border-radius:7px;font-weight:500;font-size:13px;
+color:var(--text-secondary);transition:all .15s;min-height:32px;display:flex;align-items:center}
+.tabbar label:hover{color:var(--text-primary)}
+#tab1:checked~.tabbar label[for=tab1],
+#tab2:checked~.tabbar label[for=tab2],
+#tab3:checked~.tabbar label[for=tab3],
+#tab4:checked~.tabbar label[for=tab4],
+#tab5:checked~.tabbar label[for=tab5],
+#tab6:checked~.tabbar label[for=tab6]{background:var(--surface-1);color:var(--series-1);
+font-weight:600;box-shadow:0 1px 3px rgba(15,23,42,.12)}
+.tabs>input:focus-visible~.tabbar label{outline:2px solid var(--accent-focus)}
+.panel{display:none}
+#tab1:checked~.p1{display:block}
+#tab2:checked~.p2{display:block}
+#tab3:checked~.p3{display:block}
+#tab4:checked~.p4{display:block}
+#tab5:checked~.p5{display:block}
+#tab6:checked~.p6{display:block}
+/* ---- mobile-first: mídia fluida, sem overflow horizontal, tap targets ---- */
+html{-webkit-text-size-adjust:100%}
+img,svg,canvas{max-width:100%;height:auto}
+.card{-webkit-overflow-scrolling:touch}
+.li-tit,.leg-nome,.li-coord,table.tb td{overflow-wrap:anywhere}
+@media (max-width:640px){
+  body{font-size:14.5px}
+  .wrap{padding:18px 14px 48px}
+  header h1{font-size:20px}
+  header .sub{font-size:13.5px}
+  section{margin-top:20px}
+  .card{padding:12px}
+  .tiles{grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px;margin:16px 0 4px}
+  .tile{padding:12px 13px}
+  .tile-val{font-size:20px}
+  /* nav com alvos de toque ≥44px */
+  .topbar-in{height:auto;min-height:52px;padding:6px 12px;gap:8px}
+  .snav a{padding:10px 11px;font-size:14px;min-height:40px}
+  /* listas: empilha colunas em vez de espremer */
+  .li,.li4{grid-template-columns:1fr;gap:3px;align-items:start;padding:9px 6px}
+  .li-coord,.li-tipo,.li-proc{justify-self:start}
+  .leg{min-width:0;width:100%}
+  .donut-wrap{gap:14px;justify-content:center}
+  table.tb{font-size:12.5px}
+  table.tb th,table.tb td{padding:7px 8px}
+  .sec-desc,.explica p,.explica summary{font-size:12.5px}
+  .hero h1{font-size:24px}
+  .hero .sub{font-size:15px}
+  .chips button{padding:10px 14px}
+  .par2{gap:16px}
+}
+@media (max-width:380px){.tiles{grid-template-columns:1fr 1fr}}
+/* ---- nav estreita/mobile: menu vira hambúrguer (dropdown), sem wrap ---- */
+@media (max-width:1080px){
+  .nav-burger{display:inline-flex}
+  .nav-toggle:checked~.nav-burger .ic-open{display:none}
+  .nav-toggle:checked~.nav-burger .ic-close{display:block}
+  .topbar-in{flex-wrap:nowrap;gap:10px}
+  .snav{position:absolute;top:100%;left:0;right:0;flex:none;flex-direction:column;gap:2px;
+    background:var(--nav-bg);border-bottom:1px solid var(--grid);
+    box-shadow:0 10px 28px rgba(15,23,42,.14);padding:6px;overflow:hidden;
+    max-height:0;transition:max-height .22s ease}
+  .nav-toggle:checked~.snav{max-height:min(80vh,560px);overflow-y:auto}
+  .snav a{width:100%;padding:12px 14px;min-height:44px;font-size:15px}
+}
+@media (max-width:1080px) and (prefers-reduced-motion:reduce){.snav{transition:none}}
+"""
+
+
+_ICONES = {
+    "painel": '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+    "acoes": '<svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+    "busca": '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+    "sem": '<svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+    "pend": '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 11h3"/></svg>',
+    "pessoas": '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    "dados": '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>',
+    "temas": '<svg viewBox="0 0 24 24"><path d="M20.6 13.4 11 3.8a2 2 0 0 0-1.4-.6H4a1 1 0 0 0-1 1v5.6a2 2 0 0 0 .6 1.4l9.6 9.6a2 2 0 0 0 2.8 0l4.6-4.6a2 2 0 0 0 0-2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>',
+    "comunidade": '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+    "investimento": '<svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>',
+}
+
+_NAV_ITENS = [("index.html", "Buscar", "busca"), ("painel.html", "Painel", "painel"),
+              ("acoes/index.html", "Ações", "acoes"),
+              ("extensionistas/index.html", "Extensionistas", "pessoas"),
+              ("temas.html", "Temas", "temas"),
+              ("jornada.html", "Jornada", "pessoas"),
+              ("comunidade.html", "Comunidade", "comunidade"),
+              ("investimento.html", "Investimento", "investimento"),
+              ("pendencias-relatorio.html", "Pendências", "pend"),
+              ("dados-abertos.html", "Dados", "dados")]
+
+
+def montar_shell(base: str, ativo: str, crumb: str, titulo: str, sub: str, corpo: str,
+                 hero: bool = False) -> str:
+    """Layout minimalista: topbar (brand + menu) + conteúdo.
+
+    hero=True centraliza o cabeçalho (usado na home de busca)."""
+    links = "".join(
+        f'<a href="{base}{href}" class="{"on" if href == ativo else ""}">'
+        f'{_ICONES[ic]}<span>{escape(rotulo)}</span></a>'
+        for href, rotulo, ic in _NAV_ITENS)
+    sub_p = f'<p class="sub">{escape(sub)}</p>' if sub else ""
+    cab = (f'<header class="hero"><h1>{escape(titulo)}</h1>{sub_p}</header>'
+           if hero else
+           f'<p class="crumb">Páginas / <b>{escape(crumb)}</b></p>'
+           f'<header><h1>{escape(titulo)}</h1>{sub_p}</header>')
+    return f"""<div class="topbar"><div class="topbar-in">
+  <a class="brand" href="{base}index.html">SRC · Campus Serra<small>Extensão &amp; Ensino</small></a>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle">
+  <label for="nav-toggle" class="nav-burger" aria-label="Abrir menu" title="Menu">
+    <svg class="ic-open" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <svg class="ic-close" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+  </label>
+  <nav class="snav" aria-label="Navegação principal">{links}</nav>
+</div></div>
+<div class="main"><div class="wrap{' wrap-hero' if hero else ''}">
+{cab}
+{corpo}
+</div></div>"""
+
+
+def gerar_painel(
+    acoes_dir: str | Path = "data/serra",
+    part_dir: str | Path = "data/participacoes",
+    consolidado_json: str | Path = "data/serra_consolidado.json",
+    out_html: str | Path = "painel.html",
+    *,
+    titulo: str = "SRC/Ifes — Campus Serra",
+    nota: str = "",
+    formandos_dir: str | Path = "data/formandos",
+) -> Path:
+    # aplica a paleta categórica do Horizon aos donuts (rebind do global usado por _donut)
+    original = relatorio._CAT
+    relatorio._CAT = HORIZON_CAT
+    try:
+        a_rel = agregar(_carregar_acoes(acoes_dir), _carregar_participacoes(part_dir))
+        t1, s1 = blocos_relatorio(a_rel)
+        consolidado = json.loads(Path(consolidado_json).read_text(encoding="utf-8"))
+        a_ind = agregar_indicadores(consolidado)
+        t2, s2 = blocos_indicadores(a_ind)
+        a_net = agregar_rede(consolidado)
+        t3, s3 = blocos_rede(a_net)
+        a_imp = agregar_impacto(consolidado)
+        t5, s5 = blocos_impacto(a_imp)
+        try:  # aba Formados (opcional — depende das planilhas)
+            a_form = agregar_formados(consolidado, formandos_dir)
+            t4, s4 = blocos_formados(a_form)
+        except Exception:
+            a_form, t4, s4 = None, "", ""
+        a_fp = agregar_forproex(consolidado, formandos_dir=formandos_dir)
+        t6, s6 = blocos_forproex(a_fp)
+    finally:
+        relatorio._CAT = original
+
+    banner = (f'<div class="nota">{escape(nota)}</div>' if nota else "")
+    conteudo = f"""{banner}
+<div class="tabs">
+  <input type="radio" name="tab" id="tab1" checked>
+  <input type="radio" name="tab" id="tab2">
+  <input type="radio" name="tab" id="tab3">
+  <input type="radio" name="tab" id="tab4">
+  <input type="radio" name="tab" id="tab5">
+  <input type="radio" name="tab" id="tab6">
+  <div class="tabbar"><label for="tab1">Visão geral</label><label for="tab2">Indicadores</label><label for="tab3">Rede &amp; programas</label>{('<label for="tab4">Formados na Extensão</label>' if t4 else '')}<label for="tab5">Impacto</label><label for="tab6">Índice (FORPROEX)</label></div>
+  <div class="panel p1"><div class="tiles">{t1}</div>{s1}</div>
+  <div class="panel p2"><div class="tiles">{t2}</div>{s2}</div>
+  <div class="panel p3"><div class="tiles">{t3}</div>{s3}</div>
+  {(f'<div class="panel p4"><div class="tiles">{t4}</div>{s4}<div class="pii">Cruzamento por nome (planilhas de formados não têm CPF): pode haver homônimos/variações. Só contagens agregadas — sem nomes.</div></div>' if t4 else '')}
+  <div class="panel p5"><div class="tiles">{t5}</div>{s5}</div>
+  <div class="panel p6"><div class="tiles">{t6}</div>{s6}<div class="pii">Índice nas 5 dimensões dos Indicadores Brasileiros de Extensão (FORPROEX, 2017). Relatório completo, com fontes e complemento internacional, no site da diretoria.</div></div>
+</div>
+<div class="pii">Painel <b>agregado</b>: sem nomes de alunos, CPF ou e-mail. Coordenadores(as)
+são dado público do sistema; membros de equipe entram só como elo, nunca exibidos.</div>
+<footer>Gerado por src-etl · {a_rel['n_acoes']} ações · {a_ind['alunos_unicos']} alunos únicos · {a_net['n_programas']} programas.</footer>"""
+    corpo = montar_shell(
+        "", "painel.html", "Painel", titulo,
+        "Painel analítico — visão geral, indicadores e rede de colaboração", conteudo)
+
+    doc = (f"<!doctype html><html lang='pt-br'><head><meta charset='utf-8'>"
+           f"<meta name='viewport' content='width=device-width,initial-scale=1'>"
+           f"<title>{escape(titulo)} — Painel</title><style>{HORIZON_CSS}</style></head>"
+           f"<body>{corpo}</body></html>")
+    out = Path(out_html)
+    out.write_text(doc, encoding="utf-8")
+    return out
+
+
+def _cli(argv: list[str] | None = None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(prog="src-etl-painel",
+                                 description="Painel combinado (relatório + indicadores), tema Horizon.")
+    ap.add_argument("--acoes", default="data/serra")
+    ap.add_argument("--part", default="data/participacoes")
+    ap.add_argument("--consolidado", default="data/serra_consolidado.json")
+    ap.add_argument("--out", default="painel.html")
+    ap.add_argument("--titulo", default="SRC/Ifes — Campus Serra")
+    args = ap.parse_args(argv)
+    p = gerar_painel(args.acoes, args.part, args.consolidado, args.out, titulo=args.titulo)
+    print(f"Painel gerado: {p}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(_cli())
