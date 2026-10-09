@@ -16,6 +16,23 @@ services:
       timeout: 5s
       retries: 5
 
+  horizon-db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${HORIZON_DB_USER:-horizon}
+      - POSTGRES_PASSWORD=${HORIZON_DB_PASSWORD:-horizon}
+      - POSTGRES_DB=${HORIZON_DB_NAME:-horizon}
+    ports:
+      - "${HORIZON_DB_PORT:-5434}:5432"
+    volumes:
+      - horizon_db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   server:
     image: prefecthq/prefect:3.6.23-python3.12
     restart: always
@@ -63,3 +80,4 @@ services:
 
 volumes:
   prefect_db:
+  horizon_db:
