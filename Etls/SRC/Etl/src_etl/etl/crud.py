@@ -265,3 +265,28 @@ def upsert_participacoes(db: Session, part: models.AcaoParticipacoes):
                 )
                 db.add(pp)
                 db.commit()
+
+def upsert_vinculadas(db: Session, acao_id_db: int, filhas: list[dict]):
+    """Insere os vínculos na tabela AcaoVinculada.
+    Recebe o ID interno da ação mãe e a lista de dicionários das filhas (com 'processo').
+    """
+    from sqlalchemy import delete
+    # Limpa vínculos antigos dessa mãe para recriar (simples e seguro)
+    db.execute(delete(database.AcaoVinculada).where(database.AcaoVinculada.fk_AcaoVinculante_id == acao_id_db))
+    db.commit()
+
+    for filha in filhas:
+        proc_filha = filha.get("processo")
+        if not proc_filha:
+            continue
+        
+        # Tenta achar a ação filha pelo processo
+        acao_filha = db.query(database.Acao).filter(database.Acao.processo == proc_filha).first()
+        if acao_filha:
+            vinc = database.AcaoVinculada(
+                fk_AcaoVinculante_id=acao_id_db,
+                fk_AcaoVinculada_id=acao_filha.id
+            )
+            db.add(vinc)
+    
+    db.commit()

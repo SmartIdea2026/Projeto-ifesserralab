@@ -23,13 +23,8 @@ class Acao(BaseModel):
     titulo: str | None = Field(None, alias="Título ação")
     fomento: str | None = Field(None, alias="Fomento")
     acao_vinculante: str | None = Field(None, alias="Ação vinculante")
-    grande_area: str | None = Field(None, alias="Grande área conhecimento")
-    area_tematica_principal: str | None = Field(None, alias="Área temática principal")
-    area_tematica_secundaria: str | None = Field(None, alias="Área temática secundária")
     relatorio_aprovado: str | None = Field(None, alias="Relatório aprovado")
-    data_ultimo_relatorio: str | None = Field(None, alias="Data último relatório")
     data_cadastro: str | None = Field(None, alias="Data de cadastro")
-    resumo: str | None = Field(None, alias="Resumo")
 
     model_config = {"populate_by_name": True, "extra": "allow"}
 

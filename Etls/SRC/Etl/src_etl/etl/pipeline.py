@@ -215,3 +215,25 @@ def run(
         salvar_por_campus(dados, out_dir)
         
     return dados
+
+def run_vinculadas(on_progress=None) -> None:
+    """Extrai vínculos (Ações Vinculadas) e grava no banco de dados."""
+    from .vinculadas import fetch_vinculadas
+    log = on_progress or (lambda _m: None)
+    
+    db = database.SessionLocal()
+    try:
+        acoes = db.query(database.Acao.id, database.Acao.acao_original_id, database.Acao.processo).all()
+        log(f"Iniciando busca de ações vinculadas (avaliando {len(acoes)} ações-mãe cadastradas)...")
+        
+        with httpx.Client(follow_redirects=True, headers={"User-Agent": USER_AGENT}, timeout=30) as cli:
+            for acao_db_id, acao_original_id, processo in acoes:
+                try:
+                    filhas = fetch_vinculadas(acao_original_id, cli)
+                    if filhas:
+                        crud.upsert_vinculadas(db, acao_db_id, filhas)
+                        log(f"  {processo}: {len(filhas)} vinculadas encontradas e salvas.")
+                except Exception as e:
+                    log(f"  ! erro ao buscar vinculadas para {processo}: {e}")
+    finally:
+        db.close()

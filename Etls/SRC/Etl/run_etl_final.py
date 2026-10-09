@@ -75,5 +75,9 @@ else:
     print("A etapa de Participações (Equipe Executora e Público-Alvo) requer autenticação.")
     print("Foi ignorada por enquanto. Para executar, adicione as credenciais e rode novamente.")
 
+
+print("\n--- 3. Extraindo Ações Vinculadas ---")
+pipeline.run_vinculadas(on_progress=print_log)
+
 print("\n🏁 Processo de carga 100% Finalizado!")
 
