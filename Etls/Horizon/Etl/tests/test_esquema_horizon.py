@@ -230,3 +230,22 @@ def test_dados_iniciais_dos_tipos(banco):
         "projeto_pesquisa",
     ]
     assert [linha[0] for linha in tipos_producao] == ["artigo"]
+
+
+def test_dados_iniciais_do_ifes_e_dos_papeis_fixos(banco):
+    from src.core.ports.repositorio_organizacoes import PAPEIS_FIXOS
+
+    conexao, schema = banco
+
+    aplicar_schema(conexao, schema=schema)
+
+    organizacoes = _consultar(
+        conexao, f'SELECT nome, sigla, tipo FROM "{schema}".organizacoes'
+    )
+    papeis = _consultar(conexao, f'SELECT escopo, nome FROM "{schema}".papeis')
+    assert organizacoes == [
+        ("Instituto Federal do Espírito Santo", "IFES", "instituicao_ensino")
+    ]
+    assert sorted(papeis) == sorted(
+        (escopo, nome) for escopo, nomes in PAPEIS_FIXOS.items() for nome in nomes
+    )
