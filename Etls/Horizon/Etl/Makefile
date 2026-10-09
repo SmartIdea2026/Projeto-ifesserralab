@@ -30,7 +30,7 @@ PREFECT_DB_SERVICE ?= database
 	db-clean db-init db-reset \
 	horizon-db-up horizon-db-stop horizon-db-schema \
 	prefect-server prefect-stop prefect-status \
-	pipeline pipeline-log weekly-flows full-refresh \
+	pipeline pipeline-log weekly-flows full-refresh pipeline-postgres \
 	ingest-sigpesq \
 	ingest-lattes-download ingest-lattes-projects ingest-lattes-full \
 	sync-cnpq \
@@ -40,7 +40,7 @@ PREFECT_DB_SERVICE ?= database
 	audit-duplicates consolidate-duplicates \
 	status clean \
 	docker-up docker-stop docker-build \
-	docker-pipeline docker-weekly-flows docker-full-refresh \
+	docker-pipeline docker-weekly-flows docker-full-refresh docker-pipeline-postgres \
 	docker-ingest-sigpesq docker-sync-cnpq \
 	docker-export-canonical \
 	docker-db-reset
@@ -121,6 +121,9 @@ prefect-status: ## Show local Prefect server status
 
 pipeline: prefect-server ## Run the unified ingestion pipeline (CAMPUS=Serra)
 	@$(FLOW_PYTHON) app.py full_pipeline "$(CAMPUS)" "$(OUTPUT_DIR)"
+
+pipeline-postgres: horizon-db-up prefect-server ## Recreate the Horizon PostgreSQL and load all sources (CAMPUS=Serra; SEM_DOWNLOAD=1 reuses SigPesq files)
+	@$(FLOW_PYTHON) -m src.flows.pipelines.horizon_postgres $(if $(CAMPUS),--campus "$(CAMPUS)") $(if $(SEM_DOWNLOAD),--sem-download)
 
 pipeline-log: prefect-server logs-dir ## Run the unified pipeline and tee output to logs/
 	@$(FLOW_PYTHON) app.py full_pipeline "$(CAMPUS)" "$(OUTPUT_DIR)" 2>&1 | tee logs/pipeline_$(CAMPUS)_$$(date +%Y%m%d_%H%M%S).log
@@ -277,6 +280,9 @@ docker-build: ## Build the ETL app Docker image
 
 docker-pipeline: docker-up ## Run full pipeline in Docker (CAMPUS=Serra)
 	@$(DOCKER_COMPOSE) run --rm --no-deps app app.py full_pipeline "$(CAMPUS)" "$(OUTPUT_DIR)"
+
+docker-pipeline-postgres: docker-up horizon-db-up ## Run the Horizon PostgreSQL pipeline in Docker (CAMPUS=Serra; SEM_DOWNLOAD=1 reuses SigPesq files)
+	@$(DOCKER_COMPOSE) run --rm --no-deps app -m src.flows.pipelines.horizon_postgres $(if $(CAMPUS),--campus "$(CAMPUS)") $(if $(SEM_DOWNLOAD),--sem-download)
 
 docker-weekly-flows: docker-up ## Run weekly flows in Docker
 	@$(DOCKER_COMPOSE) run --rm --no-deps app app.py weekly "$(WEEKLY_CAMPUS)" "$(OUTPUT_DIR)"

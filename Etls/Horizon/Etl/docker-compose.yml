@@ -65,8 +65,12 @@ services:
       CHROME_BINARY: /usr/bin/chromium
       CHROMEDRIVER_PATH: /usr/bin/chromedriver
       STORAGE_TYPE: db
+      HORIZON_DATABASE_URL: postgresql://${HORIZON_DB_USER:-horizon}:${HORIZON_DB_PASSWORD:-horizon}@horizon-db:5432/${HORIZON_DB_NAME:-horizon}
+      HORIZON_MODELO_SQL: /app/modelo/ModeloLogicoHorizon.sql
     volumes:
       - ./db:/app/db
+      - ../ModeloLogicoHorizon.sql:/app/modelo/ModeloLogicoHorizon.sql:ro
+      - ./data/reports:/app/data/reports
       - ./data/exports:/app/data/exports
       - ./data/lattes_json:/app/data/lattes_json
       - ./data/raw:/app/data/raw
@@ -74,6 +78,8 @@ services:
       - ./logs:/app/logs
     depends_on:
       server:
+        condition: service_healthy
+      horizon-db:
         condition: service_healthy
     profiles:
       - app
