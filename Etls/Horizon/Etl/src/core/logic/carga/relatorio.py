@@ -28,6 +28,7 @@ class RelatorioCarga:
     def __init__(self) -> None:
         self.inicio = datetime.now()
         self.pendencias: List[Pendencia] = []
+        self.revisoes: List[Pendencia] = []
         self._contagens: DefaultDict[str, Counter] = defaultdict(Counter)
 
     def contar(self, passo: str, evento: str, quantidade: int = 1) -> None:
@@ -37,6 +38,11 @@ class RelatorioCarga:
         """Registro deixado de fora (dado obrigatório ausente, erro ao gravar...)."""
         self.pendencias.append(Pendencia(passo, motivo, registro))
         self.contar(passo, "pulados")
+
+    def revisar(self, passo: str, motivo: str, registro: str) -> None:
+        """Registro gravado que pede conferência humana (ex.: casado por título aproximado)."""
+        self.revisoes.append(Pendencia(passo, motivo, registro))
+        self.contar(passo, "a_revisar")
 
     def descartar(self, passo: str, campo: str, quantidade: int = 1) -> None:
         """Campo lido da fonte que não tem destino no banco (decisão 9)."""
@@ -51,6 +57,7 @@ class RelatorioCarga:
             "fim": datetime.now().isoformat(timespec="seconds"),
             "contagens": self.contagens(),
             "pendencias": [asdict(p) for p in self.pendencias],
+            "revisar": [asdict(r) for r in self.revisoes],
         }
 
     def salvar(self, pasta: str = PASTA_PADRAO) -> str:

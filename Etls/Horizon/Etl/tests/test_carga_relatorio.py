@@ -34,3 +34,18 @@ def test_relatorio_salva_com_data_e_copia_mais_recente(tmp_path):
                 "registro": "Grupo X",
             }
         ]
+
+
+def test_relatorio_lista_itens_para_revisar(tmp_path):
+    relatorio = RelatorioCarga()
+
+    relatorio.revisar("enriquecimento_pj", "casado por título aproximado", "Projeto X")
+
+    assert relatorio.contagens() == {"enriquecimento_pj": {"a_revisar": 1}}
+    assert relatorio.resumo()["revisar"] == [
+        {
+            "passo": "enriquecimento_pj",
+            "motivo": "casado por título aproximado",
+            "registro": "Projeto X",
+        }
+    ]

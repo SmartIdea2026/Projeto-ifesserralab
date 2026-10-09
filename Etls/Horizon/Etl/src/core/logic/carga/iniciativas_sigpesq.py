@@ -29,6 +29,7 @@ import pandas as pd
 
 from src.core.logic.carga.contexto import ContextoCarga
 from src.core.logic.carga.regras import situacao_iniciativa, situacao_pela_data, texto
+from src.core.logic.initiative_identity import build_identity_key
 from src.core.logic.strategies.sigpesq_advisorships import (
     SigPesqAdvisorshipMappingStrategy,
 )
@@ -80,6 +81,18 @@ class CarregadorIniciativasSigpesq:
             estrategia_bolsistas or SigPesqAdvisorshipMappingStrategy()
         )
         self._por_identidade: Dict[str, int] = {}
+
+    def projetos_por_codigo(self) -> Dict[str, int]:
+        """Código SigPesq → id dos projetos (aprovados) carregados nesta execução.
+
+        Substitui o índice que o enriquecimento PJ lia das tabelas de rastreamento.
+        """
+        prefixo = build_identity_key(["sigpesq_project"]) + "|"
+        return {
+            chave[len(prefixo) :]: iniciativa_id
+            for chave, iniciativa_id in self._por_identidade.items()
+            if chave.startswith(prefixo) and chave[len(prefixo) :].isdigit()
+        }
 
     # ------------------------------------------------------------ projetos
     def carregar_projetos_arquivo(self, caminho: str) -> None:
