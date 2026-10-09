@@ -73,7 +73,48 @@ if tem_credenciais:
 else:
     print("\n⚠️ O arquivo .env não foi encontrado ou não possui USER/PASSWORD válidos.")
     print("A etapa de Participações (Equipe Executora e Público-Alvo) requer autenticação.")
-    print("Foi ignorada por enquanto. Para executar, adicione as credenciais e rode novamente.")
+    print("Preenchendo tabelas vazias com 'XXXXX' para exemplificar a estrutura...")
+    
+    from src_etl.etl.models import Acao, AcaoParticipacoes, AtividadeParticipacoes
+    from src_etl.etl import crud
+    
+    db = database.SessionLocal()
+    try:
+        # Cria apenas UMA ação fake para não poluir ações reais com atividades fictícias
+        acao_fake = Acao(acao_id="XXXXX", processo="XXXXX")
+        crud.upsert_acao(db, acao_fake)
+        
+        ap_fake = AcaoParticipacoes(
+            processo="XXXXX",
+            atividades=[
+                AtividadeParticipacoes(
+                    atividade_id="XXXXX",
+                    atividade="XXXXX",
+                    tipo="XXXXX",
+                    equipe_execucao=[{
+                        "Nome": "XXXXX",
+                        "CPF": "1XXXXX",
+                        "E-mail": "XXXXX",
+                        "Função": "XXXXX",
+                        "Vínculo": "XXXXX"
+                    }],
+                    publico_alvo=[{
+                        "Nome": "XXXXX",
+                        "CPF": "2XXXXX",
+                        "E-mail": "XXXXX",
+                        "Situação": "XXXXX",
+                        "Carga horária": "0h",
+                        "Certificado": "Não"
+                    }]
+                )
+            ]
+        )
+        crud.upsert_participacoes(db, ap_fake)
+        print("✅ Criado 1 processo de exemplo com dados 'XXXXX'.")
+    except Exception as e:
+        print(f"Erro ao inserir dados XXXXX: {e}")
+    finally:
+        db.close()
 
 
 print("\n--- 3. Extraindo Ações Vinculadas ---")
