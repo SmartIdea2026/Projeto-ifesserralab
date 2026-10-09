@@ -5,7 +5,7 @@ from src.core.ports.repositorio_areas_conhecimento import RepositorioAreasConhec
 
 
 class RepositorioAreasConhecimentoPostgres(RepositorioAreasConhecimento):
-    """Áreas de conhecimento e ligações com equipes e pessoas.
+    """Áreas de conhecimento e ligações com equipes, pessoas e iniciativas.
 
     Recebe uma conexão aberta e não faz commit. Uma só normalização de nome
     (``normalize_text``) para todas as fontes; o nome gravado é o da primeira
@@ -52,6 +52,17 @@ class RepositorioAreasConhecimentoPostgres(RepositorioAreasConhecimento):
             RETURNING area_id
             """,
             (pessoa_id, area_id),
+        )
+
+    def ligar_area_iniciativa(self, iniciativa_id: int, area_id: int) -> bool:
+        return self._ligar(
+            """
+            INSERT INTO areas_conhecimento_iniciativa (iniciativa_id, area_id)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING
+            RETURNING area_id
+            """,
+            (iniciativa_id, area_id),
         )
 
     def _ligar(self, consulta: str, parametros: tuple) -> bool:

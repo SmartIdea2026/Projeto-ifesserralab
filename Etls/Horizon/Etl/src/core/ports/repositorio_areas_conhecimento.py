@@ -21,3 +21,8 @@ class RepositorioAreasConhecimento(ABC):
     def ligar_area_pessoa(self, pessoa_id: int, area_id: int) -> bool:
         """Liga a área à pessoa. False se já ligada."""
         pass
+
+    @abstractmethod
+    def ligar_area_iniciativa(self, iniciativa_id: int, area_id: int) -> bool:
+        """Liga a área à iniciativa. False se já ligada."""
+        pass
