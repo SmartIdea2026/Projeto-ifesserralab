@@ -3,6 +3,8 @@
 from datetime import date, datetime
 from typing import Any, Optional, Union
 
+import pandas as pd
+
 Data = Union[date, datetime]
 
 # Situações que as estratégias de mapeamento e o parser do Lattes produzem.
@@ -79,3 +81,16 @@ def data_atualizacao_lattes(valor: Any) -> Optional[datetime]:
         except ValueError:
             continue
     return None
+
+
+def texto(valor: Any) -> Optional[str]:
+    """Texto limpo da planilha; vazio, None ou NaN viram None."""
+    if valor is None:
+        return None
+    try:
+        if pd.isna(valor):
+            return None
+    except (TypeError, ValueError):
+        pass
+    limpo = str(valor).strip()
+    return limpo or None

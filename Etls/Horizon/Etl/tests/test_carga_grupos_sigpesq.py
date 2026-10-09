@@ -2,7 +2,8 @@ import pandas as pd
 import pytest
 
 from src.core.logic.carga.contexto import ContextoCarga
-from src.core.logic.carga.grupos_sigpesq import CarregadorGruposSigpesq, texto
+from src.core.logic.carga.grupos_sigpesq import CarregadorGruposSigpesq
+from src.core.logic.carga.regras import texto
 from src.core.logic.pii_anonymizer import anonymize_email
 
 NAN = float("nan")

@@ -11,28 +11,16 @@ Diferenças decididas na migração: o líder fica sem data de início (antes er
 data da carga) e a pessoa é resolvida pelo PersonMatcher, o mesmo das outras fontes.
 """
 
-from typing import Any, Iterable, Optional
+from typing import Iterable, Optional
 
 import pandas as pd
 
 from src.core.logic.carga.contexto import ContextoCarga
+from src.core.logic.carga.regras import texto
 from src.core.logic.strategies.sigpesq_excel import SigPesqExcelMappingStrategy
 
 PASSO = "grupos_sigpesq"
 CAMPUS_DESCONHECIDO = "Campus Desconhecido"
-
-
-def texto(valor: Any) -> Optional[str]:
-    """Texto limpo da planilha; vazio, None ou NaN viram None."""
-    if valor is None:
-        return None
-    try:
-        if pd.isna(valor):
-            return None
-    except (TypeError, ValueError):
-        pass
-    limpo = str(valor).strip()
-    return limpo or None
 
 
 class CarregadorGruposSigpesq:
