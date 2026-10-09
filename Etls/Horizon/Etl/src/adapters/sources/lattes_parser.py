@@ -111,6 +111,7 @@ class LattesParser:
             "lattes_id": info.get("id_lattes"),
             "citation_names": info.get("nome_citacoes"),
             "cnpq_url": info.get("url"),
+            "updated_at": info.get("atualizacao_cv"),
         }
 
     def parse_academic_education(self, json_data: dict) -> List[Dict[str, Any]]:

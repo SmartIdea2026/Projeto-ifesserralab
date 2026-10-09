@@ -214,3 +214,16 @@ def test_parse_extras_empty_when_sections_absent(parser):
     assert parser.parse_languages({}) == []
     assert parser.parse_professional_activities({}) == []
     assert parser.parse_technical_productions({}) == []
+
+
+def test_parse_personal_info_le_data_de_atualizacao(parser):
+    info = parser.parse_personal_info(
+        {
+            "informacoes_pessoais": {
+                "nome_completo": "Ana",
+                "atualizacao_cv": "15/03/2025",
+            }
+        }
+    )
+
+    assert info["updated_at"] == "15/03/2025"
