@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import date
-from typing import Optional
+from typing import List, Optional, Tuple
 
 # Valores aceitos pelo banco Horizon (CHECK de organizacoes.tipo e papeis.escopo).
 TIPOS_ORGANIZACAO = (
@@ -47,6 +47,11 @@ class RepositorioOrganizacoes(ABC):
     @abstractmethod
     def garantir_unidade(self, nome: str, organizacao_pai_id: int) -> int:
         """Id da unidade (campus) com esse nome sob a organização-mãe, criando se preciso."""
+        pass
+
+    @abstractmethod
+    def listar_unidades(self, organizacao_pai_id: int) -> List[Tuple[int, str]]:
+        """Unidades (id, nome) sob a organização-mãe, em ordem de criação."""
         pass
 
     @abstractmethod

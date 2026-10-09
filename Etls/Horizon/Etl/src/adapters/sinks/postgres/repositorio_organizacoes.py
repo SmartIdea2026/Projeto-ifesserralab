@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Optional
+from typing import List, Optional, Tuple
 
 import psycopg
 
@@ -101,6 +101,20 @@ class RepositorioOrganizacoesPostgres(RepositorioOrganizacoes):
                 (unidade_id, organizacao_pai_id),
             )
         return unidade_id
+
+    def listar_unidades(self, organizacao_pai_id: int) -> List[Tuple[int, str]]:
+        with self._conexao.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT o.id, o.nome
+                FROM organizacoes o
+                JOIN unidades_organizacionais u ON u.id = o.id
+                WHERE u.organizacao_pai_id = %s
+                ORDER BY o.id
+                """,
+                (organizacao_pai_id,),
+            )
+            return [(unidade_id, nome) for unidade_id, nome in cursor.fetchall()]
 
     def garantir_papel(self, nome: str, escopo: str) -> int:
         if escopo not in ESCOPOS_PAPEL:

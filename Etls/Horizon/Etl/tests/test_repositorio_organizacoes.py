@@ -106,3 +106,15 @@ def test_vinculo_nao_duplica_por_organizacao_papel_e_inicio(
     assert repositorio.adicionar_vinculo(pessoa, ifes, servidor, None, None)
     assert not repositorio.adicionar_vinculo(pessoa, ifes, servidor, None, None)
     assert _contar(conexao_horizon, "SELECT COUNT(*) FROM vinculos") == 2
+
+
+def test_listar_unidades_do_ifes(repositorio):
+    ifes = repositorio.ifes_id()
+    serra = repositorio.garantir_unidade("Campus Serra", ifes)
+    vitoria = repositorio.garantir_unidade("Campus Vitória", ifes)
+    repositorio.garantir_organizacao("Campus Serra Empresa", "empresa")
+
+    assert repositorio.listar_unidades(ifes) == [
+        (serra, "Campus Serra"),
+        (vitoria, "Campus Vitória"),
+    ]
