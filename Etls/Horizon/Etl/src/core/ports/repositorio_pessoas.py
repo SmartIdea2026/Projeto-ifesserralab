@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Tuple
 
 # Valores aceitos pelo banco Horizon (CHECK de identificadores_pessoa.fonte) e
 # níveis de proficiência decididos na migração para o PostgreSQL.
@@ -60,6 +60,11 @@ class RepositorioPessoas(ABC):
         atualizado_em: datetime,
     ) -> None:
         """Grava ou substitui o perfil Lattes da pessoa."""
+        pass
+
+    @abstractmethod
+    def listar_nomes_citacao(self) -> List[Tuple[int, str]]:
+        """(pessoa_id, nomes de citação do perfil Lattes) de quem tem perfil."""
         pass
 
     @abstractmethod

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Tuple
 
 import psycopg
 
@@ -127,6 +127,13 @@ class RepositorioPessoasPostgres(RepositorioPessoas):
                 """,
                 (pessoa_id, resumo, nomes_citacao, atualizado_em),
             )
+
+    def listar_nomes_citacao(self) -> List[Tuple[int, str]]:
+        with self._conexao.cursor() as cursor:
+            cursor.execute(
+                "SELECT pessoa_id, nomes_citacao FROM perfis_lattes ORDER BY pessoa_id"
+            )
+            return [(pessoa_id, nomes) for pessoa_id, nomes in cursor.fetchall()]
 
     def adicionar_premio(self, pessoa_id: int, titulo: str, ano: Optional[int]) -> bool:
         if not titulo:

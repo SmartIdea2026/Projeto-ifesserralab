@@ -141,3 +141,15 @@ def test_proficiencia_com_nivel_invalido_e_recusada(repositorio):
         repositorio.definir_proficiencia(
             pessoa_id, "Inglês", "ALTO", "medio", "medio", "alto"
         )
+
+
+def test_listar_nomes_citacao(repositorio):
+    com_perfil = repositorio.criar("Beatriz Silva")
+    repositorio.criar("Sem Perfil")
+    repositorio.salvar_perfil_lattes(
+        com_perfil, "Resumo", "SILVA, B.;SILVA, BEATRIZ", datetime(2025, 1, 1)
+    )
+
+    assert repositorio.listar_nomes_citacao() == [
+        (com_perfil, "SILVA, B.;SILVA, BEATRIZ")
+    ]
