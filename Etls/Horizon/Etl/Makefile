@@ -28,6 +28,7 @@ PREFECT_DB_SERVICE ?= database
 
 .PHONY: help setup logs-dir \
 	db-clean db-init db-reset \
+	horizon-db-up horizon-db-stop horizon-db-schema \
 	prefect-server prefect-stop prefect-status \
 	pipeline pipeline-log weekly-flows full-refresh \
 	ingest-sigpesq \
@@ -69,6 +70,17 @@ db-init: ## Initialize database schema and base data
 	@$(PYTHON) db/create_db.py
 
 db-reset: db-clean db-init ## Recreate the local database from scratch
+
+# --- Horizon PostgreSQL (banco novo, ModeloLogicoHorizon.sql) ---
+
+horizon-db-up: ## Start the Horizon PostgreSQL (horizon-db) and wait until healthy
+	@$(DOCKER_COMPOSE) up -d --wait horizon-db
+
+horizon-db-stop: ## Stop the Horizon PostgreSQL (horizon-db)
+	@$(DOCKER_COMPOSE) stop horizon-db
+
+horizon-db-schema: horizon-db-up ## Recreate the Horizon PostgreSQL schema from ModeloLogicoHorizon.sql (erases its data)
+	@PYTHONPATH=. $(PYTHON_BIN) -m src.db.esquema_horizon
 
 # --- Prefect Server ---
 
