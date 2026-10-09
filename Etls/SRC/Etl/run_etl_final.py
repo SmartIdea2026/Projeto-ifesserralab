@@ -1,4 +1,6 @@
 import os
+import sys
+import time
 from src_etl.etl import pipeline, database
 from sqlalchemy import text
 
@@ -8,6 +10,28 @@ print("=========================================")
 
 def print_log(msg):
     print(msg)
+
+def preparar_banco(tentativas=30, intervalo=2):
+    """Aguarda o PostgreSQL aceitar conexões e cria as tabelas (idempotente)."""
+    ultimo_erro = None
+    for i in range(1, tentativas + 1):
+        try:
+            with database.engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+            database.init_db()  # create_all: só cria o que ainda não existe
+            print("✅ Banco de dados pronto (tabelas verificadas/criadas).")
+            return
+        except Exception as e:  # noqa: BLE001
+            ultimo_erro = e
+            print(f"⏳ Aguardando PostgreSQL ({i}/{tentativas})...")
+            time.sleep(intervalo)
+    print("❌ Não foi possível conectar ao PostgreSQL em localhost:5432.")
+    print("   Suba o banco com: docker compose up -d")
+    print(f"   Detalhe: {ultimo_erro}")
+    sys.exit(1)
+
+print("\n--- 0. Preparando banco de dados ---")
+preparar_banco()
 
 print("\n--- 1. Extraindo Ações do Campus Serra ---")
 # Faz a raspagem pública e insere no modelo normalizado
